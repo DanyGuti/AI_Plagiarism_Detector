@@ -1,0 +1,11 @@
+# === ANTLR runtime for Python ===
+antlr4-python3-runtime==4.13.2
+
+# === JSON handling and parsing ===
+orjson>=3.10.18 
+
+# === Progress bar (for data processing visualization) ===
+tqdm>=4.66
+
+# === File and system utils ===
+pathlib
