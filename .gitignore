@@ -1,0 +1,83 @@
+# ====================
+# Python ignore
+# ====================
+
+__pycache__/
+
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.env
+.venv/
+pip-wheel-metadata/
+*.log
+*.sqlite3
+
+
+# Jupyter ignores
+.ipynb_checkpoints/
+*.ipynb
+
+# ====================
+# ANTLR (Gen. Files)
+# ====================
+
+src/antlr/JavaLexer20.py
+src/antlr/JavaParser20.py
+src/antlr/JavaParser.tokens
+src/antlr/JavaParserVisitor.py
+src/antrl/JavaLexer.tokens
+
+# Keep grammars
+!src/antlr/*.g4
+
+
+# ====================================
+# Dataset and Preprocessed Files
+# ====================================
+ast_data/
+*.json
+
+
+
+# ==============================
+# Dataset and Preprocessed Files
+# ==============================
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# ==============================
+# OS
+# ==============================
+.DS_Store
+Thumbs.db
+
+# ==============================
+# VMs and VENVs
+# ==============================
+*.vbox
+*.vbox-prev
+*.vdi
+*.vmdk
+*.vmem
+*.nvram
+*.vmss
+*.vmsd
+*.vmx
+*.vmxf
+*.log
+*.lck
+*.swp
+
+# ==============================
+# ENVs/Secrets
+# ==============================
+.env
+*.env
+.env.*
+secrets.json

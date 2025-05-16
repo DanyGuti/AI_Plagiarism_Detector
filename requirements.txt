@@ -9,3 +9,6 @@ tqdm>=4.66
 
 # === File and system utils ===
 pathlib
+
+# === TensorFlow ===
+tensorflow>=2.13
