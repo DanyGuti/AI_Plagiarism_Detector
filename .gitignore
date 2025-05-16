@@ -12,6 +12,7 @@ dist/
 build/
 .env
 .venv/
+venv/
 pip-wheel-metadata/
 *.log
 *.sqlite3
