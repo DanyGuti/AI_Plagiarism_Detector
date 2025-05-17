@@ -27,13 +27,6 @@ pip-wheel-metadata/
 # ANTLR (Gen. Files)
 # ====================
 
-src/antlr/JavaLexer.py
-src/antlr/JavaParser.py
-src/antlr/Java20Lexer.tokens
-src/antlr/Java20Parser.tokens
-src/antlr/Java20Lexer.interp
-src/antlr/Java20Parser.interp
-src/antlr/JavaParserListener.py
 
 # Keep grammars
 !src/antlr/*.g4
