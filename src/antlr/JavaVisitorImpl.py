@@ -1,14 +1,25 @@
 from antlr4 import *
-from antlr.JavaParserListener import JavaParserListener
+from .Java20ParserVisitor import Java20ParserVisitor as JParserVisitor
+from .Java20Parser import Java20Parser
 
-class JavaParserVisitorImpl(JavaParserListener):
+class JavaParserVisitorImpl(JParserVisitor):
+    node_features : dict[int, dict[str, str | list[int]]] = {}
+    def __init__(self):
+        super().__init__()
+        # monotonic increasing id for each node
+        self._next_id = 0
+        # mapping from node id to node features
+        self.node_features : dict[int, dict[str, str | list[int]]] = {}
+        # adjacency list: parent -> children
+        self.edges : dict[int,list[int]] = {}
+
     def visitImportDeclaration(self, ctx):
         '''
         Handle import declarations in Java code.
         '''
         # Handle import declarations
         print("Import Declaration:", ctx.getText())
-        return self.visitChildren(ctx)
+        return None
 
     def visitStatement(self, ctx):
         '''
@@ -21,15 +32,28 @@ class JavaParserVisitorImpl(JavaParserListener):
                 print("Statement:", text)
         except Exception as e:
             print(f"Error processing statement: {e}")
-        return self.visitChildren(ctx)
+        return {
+            "type": "Statement",
+            "text": ctx.getText(),
+            "children": self.visitChildren(ctx)
+        }
 
     def visitMethodDeclaration(self, ctx):
         '''
         Handle method declarations.
         '''
+        header_ctx = ctx.methodHeader()
+        id_node = ctx.getToken(Java20Parser.Identifier, 0)
+        method_name = id_node.getText() if id_node else None
+        
+        print("Method header ctx:", header_ctx)
+        result_ctx = header_ctx.getTypedRuleContext(Java20Parser.ResultContext, 0)
+        # Return type
+        return_type = result_ctx.getText() if result_ctx else None
         return {
             "type": "MethodDeclaration",
-            "name": ctx.typeType().getText() if ctx.typeType() else "unknown",
+            "name": method_name,
+            "returnType": return_type,
             "children": self.visitChildren(ctx)
         }
 
@@ -37,9 +61,11 @@ class JavaParserVisitorImpl(JavaParserListener):
         '''
         Handle class declarations.
         '''
+        id_node = ctx.getToken(Java20Parser.Identifier, 0)
+        class_name = id_node.getText() if id_node else None
         return {
             "type": "ClassDeclaration",
-            "name": ctx.IDENTIFIER().getText() if ctx.IDENTIFIER() else "unknown",
+            "name": class_name,
             "children": self.visitChildren(ctx)
         }
 
@@ -51,6 +77,11 @@ class JavaParserVisitorImpl(JavaParserListener):
             "type": "CompilationUnit",
             "children": self.visitChildren(ctx)
         }
+    def visitTerminal(self, node):
+        return {
+            "type": "Terminal",
+            "text": node.getText()
+        }
 
     def visitChildren(self, node):
         '''
@@ -58,7 +89,21 @@ class JavaParserVisitorImpl(JavaParserListener):
         '''
         results: list = []
         for child in node.getChildren():
-            result = child.accept(self)
-            if result is not None:
-                results.append(result)
+            if isinstance(child, TerminalNode):
+                results.append({
+                    "type": "Terminal",
+                    "text": child.getText()
+                })
+            else:
+                ast = child.accept(self)
+                if ast is not None:
+                    results.append(ast)
+        if hasattr(node, "getText"):
+            rule_index = node.getRuleIndex()
+            rule_name = Java20Parser.ruleNames[rule_index]
+            return {
+                "type": rule_name,
+                "text": node.getText(),
+                "children": results
+            }
         return results
