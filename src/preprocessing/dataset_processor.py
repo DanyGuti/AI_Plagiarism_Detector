@@ -1,9 +1,7 @@
-'''
-This script processes a dataset of Java files, categorizing them into
-'''
 import json
 from pathlib import Path
-from .parser_utils import parse_java_code
+from tqdm import tqdm
+from .parser_utils import parse_java_code  # adjust the import if needed
 
 CATEGORIES: list[str] = [
     "plagiarized",
@@ -11,113 +9,78 @@ CATEGORIES: list[str] = [
     "original"
 ]
 
-def process_plagiarized_folder(
-    case_folder: str, src_folder: str, dst_root: str
-) -> None:
-    '''
-    Process a folder of plagiarized Java files, categorizing them into different
-    '''
-    for ls in src_folder.iterdir():
-        if ls.is_dir():
-            src_folder = case_folder / "plagiarized" / ls.name
-            dst_folder = dst_root / case_folder.name / "plagiarized" / ls.name
-            dst_folder.mkdir(parents=True, exist_ok=True)
-            for num in src_folder.iterdir():
-                if num.is_dir():
-                    src_folder = case_folder / "plagiarized" / ls.name / num.name
-                    dst_folder = dst_root / case_folder.name / "plagiarized" / ls.name / num.name
-                    dst_folder.mkdir(parents=True, exist_ok=True)
-                    # Process Java files in the nested folder
-                    for java_file in src_folder.glob("*.java"):
-                        with open(java_file, "r", encoding="utf-8") as f:
-                            code = f.read()
-                        try:
-                            ast = parse_java_code(code)
-                            output_path = dst_folder / f"{java_file.stem}.json"
-                            with open(output_path, "w", encoding="utf-8") as out_f:
-                                json.dump(ast, out_f, indent=2)
-                        except Exception as e:
-                            print(f"Error processing {java_file}: {e}")
-                            continue
-                        print(f"Processed {java_file} -> {output_path}")
+def collect_java_files(src_root: Path) -> list[tuple[Path, Path]]:
+    """
+    Traverse all case folders and collect Java files with their target output paths.
+    Returns:
+        A list of tuples: (input_java_path, output_json_path_relative_to_src_root)
+    """
+    all_files = []
 
-def process_non_plagiarized_folder(
-    case_folder: str, src_folder: str, dst_root: str
-) -> None:
-    '''
-    Process a folder of non-plagiarized Java files
-    '''
-    for num in src_folder.iterdir():
-        if num.is_dir():
-            src_folder = case_folder / "non-plagiarized" / num.name
-            dst_folder = dst_root / case_folder.name / "non-plagiarized" / num.name
-            dst_folder.mkdir(parents=True, exist_ok=True)
-            # Process Java files in the nested folder
-            for java_file in src_folder.glob("*.java"):
-                with open(java_file, "r", encoding="utf-8") as f:
-                    code = f.read()
-                try:
-                    ast = parse_java_code(code)
-                    output_path = dst_folder / f"{java_file.stem}.json"
-                    with open(output_path, "w", encoding="utf-8") as out_f:
-                        json.dump(ast, out_f, indent=2)
-                except Exception as e:
-                    print(f"Error processing {java_file}: {e}")
-                    continue
-                print(f"Processed {java_file} -> {output_path}")
-
-def process_original_folder(
-    src_folder: str, dst_folder: str
-) -> None:
-    '''
-    Process a folder of original Directory Java files, converting them into JSON format.
-    '''
-    for java_file in src_folder.glob("*.java"):
-        with open(java_file, "r", encoding="utf-8") as f:
-            code = f.read()
-        try:
-            ast = parse_java_code(code)
-            output_path = dst_folder / f"{java_file.stem}.json"
-            with open(output_path, "w", encoding="utf-8") as out_f:
-                json.dump(ast, out_f, indent=2)
-        except Exception as e:
-            print(f"Error processing {java_file}: {e}")
+    for case_folder in src_root.iterdir():
+        if not case_folder.is_dir():
             continue
-        print(f"Processed {java_file} -> {output_path}")
 
-def process_case_folder(src_root: str, dst_root: str):
-    '''
-    Process a folder of Java files, categorizing them into different
-    categories and converting them into JSON format.
-    Args:
-        src_root (str): The source root directory containing Java files.
-        dst_root (str): The destination root directory for JSON files.
-    '''
-    src_root: Path = Path(src_root)
-    dst_root: Path = Path(dst_root)
+        for category in CATEGORIES:
+            cat_folder = case_folder / category
+            if not cat_folder.is_dir():
+                continue
+
+            if category == "plagiarized":
+                for folder in cat_folder.iterdir():
+                    if not folder.is_dir():
+                        continue
+                    for version_folder in folder.iterdir():
+                        if not version_folder.is_dir():
+                            continue
+                        for java_file in version_folder.glob("*.java"):
+                            rel_path = java_file.relative_to(src_root)
+                            output_path = rel_path.with_suffix(".json")
+                            all_files.append((java_file, output_path))
+
+            elif category == "non-plagiarized":
+                for folder in cat_folder.iterdir():
+                    if not folder.is_dir():
+                        continue
+                    for java_file in folder.glob("*.java"):
+                        rel_path = java_file.relative_to(src_root)
+                        output_path = rel_path.with_suffix(".json")
+                        all_files.append((java_file, output_path))
+
+            elif category == "original":
+                for java_file in cat_folder.glob("*.java"):
+                    rel_path = java_file.relative_to(src_root)
+                    output_path = rel_path.with_suffix(".json")
+                    all_files.append((java_file, output_path))
+
+    return all_files
+
+def process_all_files(src_root: str, dst_root: str):
+    """
+    Process all Java files from the source root and write their parsed AST as JSON in the destination.
+    Shows a single global progress bar.
+    """
+    src_root = Path(src_root)
+    dst_root = Path(dst_root)
+
     if not src_root.is_dir():
         raise ValueError(f"Source root {src_root} is not a directory.")
     if not dst_root.is_dir():
         raise ValueError(f"Destination root {dst_root} is not a directory.")
-    for case_folder in src_root.iterdir():
-        print(f"Processing case folder: {case_folder}")
-        if not case_folder.is_dir():
-            print(f"Skipping {case_folder}, not a directory.")
-            continue
-        for category in CATEGORIES:
-            if not (case_folder / category).is_dir():
-                print(f"Skipping {category}, not a directory.")
-                continue
-            src_folder = case_folder / category
-            dst_folder = dst_root / case_folder.name / category
-            dst_folder.mkdir(parents=True, exist_ok=True)
-            print(f"Processing category: {category}")
-            if category == "plagiarized":
-                # Go two nested folders deep for plagiarized
-                process_plagiarized_folder(case_folder, src_folder, dst_root)
-            elif category == "non-plagiarized":
-                # Go one nested folder deep for non-plagiarized
-                process_non_plagiarized_folder(case_folder, src_folder, dst_root)
-            else:
-                # Process original files directly
-                process_original_folder(src_folder, dst_folder)
+
+    all_files = collect_java_files(src_root)
+
+    with tqdm(total=len(all_files), desc="Processing Java files", unit="file") as pbar:
+        for java_file, rel_output in all_files:
+            try:
+                with open(java_file, "r", encoding="utf-8") as f:
+                    code = f.read()
+                ast = parse_java_code(code)
+
+                output_path = dst_root / rel_output
+                output_path.parent.mkdir(parents=True, exist_ok=True)
+                with open(output_path, "w", encoding="utf-8") as out_f:
+                    json.dump(ast, out_f, indent=2)
+            except Exception as e:
+                tqdm.write(f"Error processing {java_file}: {e}")
+            pbar.update(1)

@@ -17,8 +17,7 @@ class JavaParserVisitorImpl(JParserVisitor):
         '''
         Handle import declarations in Java code.
         '''
-        # Handle import declarations
-        print("Import Declaration:", ctx.getText())
+       
         return None
 
     def visitStatement(self, ctx):
@@ -28,8 +27,7 @@ class JavaParserVisitorImpl(JParserVisitor):
         '''
         try:
             text = ctx.getText()
-            if text:
-                print("Statement:", text)
+         
         except Exception as e:
             print(f"Error processing statement: {e}")
         return {
@@ -46,7 +44,6 @@ class JavaParserVisitorImpl(JParserVisitor):
         id_node = ctx.getToken(Java20Parser.Identifier, 0)
         method_name = id_node.getText() if id_node else None
         
-        print("Method header ctx:", header_ctx)
         result_ctx = header_ctx.getTypedRuleContext(Java20Parser.ResultContext, 0)
         # Return type
         return_type = result_ctx.getText() if result_ctx else None
@@ -101,7 +98,7 @@ class JavaParserVisitorImpl(JParserVisitor):
         if hasattr(node, "getText"):
             rule_index = node.getRuleIndex()
             rule_name = Java20Parser.ruleNames[rule_index]
-            return {
+            return {    
                 "type": rule_name,
                 "text": node.getText(),
                 "children": results
