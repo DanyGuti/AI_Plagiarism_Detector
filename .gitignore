@@ -1,0 +1,80 @@
+# ====================
+# Python ignore
+# ====================
+
+__pycache__/
+
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.env
+.venv/
+venv/
+venv
+pip-wheel-metadata/
+*.log
+*.sqlite3
+
+
+# Jupyter ignores
+.ipynb_checkpoints/
+*.ipynb
+
+# ====================
+# ANTLR (Gen. Files)
+# ====================
+
+
+# Keep grammars
+!src/antlr/*.g4
+
+
+# ====================================
+# Dataset and Preprocessed Files
+# ====================================
+ast_data/
+*.json
+
+
+
+# ==============================
+# Dataset and Preprocessed Files
+# ==============================
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# ==============================
+# OS
+# ==============================
+.DS_Store
+Thumbs.db
+
+# ==============================
+# VMs and VENVs
+# ==============================
+*.vbox
+*.vbox-prev
+*.vdi
+*.vmdk
+*.vmem
+*.nvram
+*.vmss
+*.vmsd
+*.vmx
+*.vmxf
+*.log
+*.lck
+*.swp
+
+# ==============================
+# ENVs/Secrets
+# ==============================
+.env
+*.env
+.env.*
+secrets.json
