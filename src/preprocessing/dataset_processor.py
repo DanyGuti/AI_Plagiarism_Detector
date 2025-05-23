@@ -1,24 +1,26 @@
-import json
 import os
 import random
+import numpy as np
 from pathlib import Path
 from typing import Dict, Tuple
-import numpy as np
 from tqdm import tqdm
 from features.ast_embedding import traverse_ast, encode_features, read_ast_from_file
 
 CATEGORIES = ["plagiarized", "non-plagiarized", "original"]
 
-def create_dictionary_from_files(input_path: str) -> Dict[str, Tuple[str, np.ndarray]]:
+def create_dictionary_from_files(input_path: str) -> Tuple[Dict[str, Tuple[str, np.ndarray]], Dict[str, Tuple[str, np.ndarray]]]:
     """
-    Parses AST JSON files from the specified directory into a dictionary of matrices.
+    Parses AST JSON files into a dictionary of encoded matrices.
     Returns:
-        A dictionary {sample_key: (case_name, encoded_matrix)}
+        (main_dict, original_dict)
+        - main_dict: samples for train/val/test
+        - original_dict: only the original files
     """
     input_path = Path(input_path)
     matrix_dict = {}
+    original_dict = {}
 
-    for case_folder in input_path.iterdir():
+    for case_folder in tqdm(list(input_path.iterdir()), desc="Parsing Cases"):
         if not case_folder.is_dir():
             continue
         case_name = case_folder.name
@@ -36,10 +38,12 @@ def create_dictionary_from_files(input_path: str) -> Dict[str, Tuple[str, np.nda
                         if not version_folder.is_dir():
                             continue
                         for file in version_folder.glob("*.json"):
-                            key = f"plag-{case_name}-{file.stem}"
                             tree = read_ast_from_file(str(file))
+                            if tree is None:
+                                continue
                             graph = traverse_ast(tree)
                             matrix = encode_features(graph)
+                            key = f"plag-{case_name}-{file.stem}"
                             matrix_dict[key] = (case_name, matrix)
 
             elif category == "non-plagiarized":
@@ -47,21 +51,26 @@ def create_dictionary_from_files(input_path: str) -> Dict[str, Tuple[str, np.nda
                     if not version_folder.is_dir():
                         continue
                     for file in version_folder.glob("*.json"):
-                        key = f"nonplag-{case_name}-{file.stem}"
                         tree = read_ast_from_file(str(file))
+                        if tree is None:
+                            continue
                         graph = traverse_ast(tree)
                         matrix = encode_features(graph)
+                        key = f"nonplag-{case_name}-{file.stem}"
                         matrix_dict[key] = (case_name, matrix)
 
             elif category == "original":
                 for file in cat_path.glob("*.json"):
-                    key = f"orig-{case_name}-{file.stem}"
                     tree = read_ast_from_file(str(file))
+                    if tree is None:
+                        continue
                     graph = traverse_ast(tree)
                     matrix = encode_features(graph)
-                    matrix_dict[key] = (case_name, matrix)
+                    key = f"orig-{case_name}-{file.stem}"
+                    original_dict[key] = (case_name, matrix)
 
-    return matrix_dict
+    return matrix_dict, original_dict
+
 
 def write_matrix(file_path: str, matrix: np.ndarray):
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
@@ -69,25 +78,31 @@ def write_matrix(file_path: str, matrix: np.ndarray):
         for row in matrix:
             f.write(" ".join(map(str, row.tolist())) + "\n")
 
+
 def create_data_split_from_dict(
     matrix_dict: Dict[str, Tuple[str, np.ndarray]],
+    original_dict: Dict[str, Tuple[str, np.ndarray]],
     train_split: float = 0.8,
     val_split: float = 0.1,
     test_split: float = 0.1,
 ):
     """
-    Splits matrices into train/val/test and writes them to matrix_data/{split}/{case}/ files.
+    Splits main_dict into train/val/test and writes them to matrix_data/{split}/{case}/.
+    Writes original_dict to matrix_data/original/{case}/.
     """
     if not np.isclose(train_split + val_split + test_split, 1.0):
         raise ValueError("Splits must sum to 1.0")
 
-    # Group by case
+    base_dir = Path(os.getcwd()).parent / "matrix_data"
+
+    # Group main dict by case
     grouped: Dict[str, list[Tuple[str, np.ndarray]]] = {}
     for key, (case, matrix) in matrix_dict.items():
         grouped.setdefault(case, []).append((key, matrix))
 
-    base_dir = Path(os.getcwd()).parent / "matrix_data"
     for case, items in grouped.items():
+        if not items:
+            continue
         random.shuffle(items)
         total = len(items)
         train_end = int(total * train_split)
@@ -103,3 +118,9 @@ def create_data_split_from_dict(
             for key, matrix in samples:
                 file_path = base_dir / split_name / case / f"{key}.txt"
                 write_matrix(str(file_path), matrix)
+
+    # Write original matrices
+    for key, (case, matrix) in original_dict.items():
+        file_path = base_dir / "original" / case / f"{key}.txt"
+        write_matrix(str(file_path), matrix)
+

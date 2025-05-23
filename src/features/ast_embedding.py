@@ -72,7 +72,6 @@ def read_ast_from_file(
         Returns:
         dict: The AST data.
     '''
-    print(f"Reading AST from {file_path}")
     with open(file_path, 'r') as f:
 
         ast_data = json.load(f)
