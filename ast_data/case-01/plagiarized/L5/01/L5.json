@@ -1,0 +1,1185 @@
+{
+  "type": "CompilationUnit",
+  "children": {
+    "type": "compilationUnit",
+    "text": "publicclassL5{publicstaticvoidprint(){for(inti=0;i<5;i++){System.out.print(\"Welcome to Java\\n\");}}publicstaticvoidmain(String[]args){print();}}",
+    "children": [
+      {
+        "type": "ordinaryCompilationUnit",
+        "text": "publicclassL5{publicstaticvoidprint(){for(inti=0;i<5;i++){System.out.print(\"Welcome to Java\\n\");}}publicstaticvoidmain(String[]args){print();}}",
+        "children": [
+          {
+            "type": "topLevelClassOrInterfaceDeclaration",
+            "text": "publicclassL5{publicstaticvoidprint(){for(inti=0;i<5;i++){System.out.print(\"Welcome to Java\\n\");}}publicstaticvoidmain(String[]args){print();}}",
+            "children": [
+              {
+                "type": "ClassDeclaration",
+                "name": null,
+                "children": {
+                  "type": "classDeclaration",
+                  "text": "publicclassL5{publicstaticvoidprint(){for(inti=0;i<5;i++){System.out.print(\"Welcome to Java\\n\");}}publicstaticvoidmain(String[]args){print();}}",
+                  "children": [
+                    {
+                      "type": "normalClassDeclaration",
+                      "text": "publicclassL5{publicstaticvoidprint(){for(inti=0;i<5;i++){System.out.print(\"Welcome to Java\\n\");}}publicstaticvoidmain(String[]args){print();}}",
+                      "children": [
+                        {
+                          "type": "classModifier",
+                          "text": "public",
+                          "children": [
+                            {
+                              "type": "Terminal",
+                              "text": "public"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Terminal",
+                          "text": "class"
+                        },
+                        {
+                          "type": "typeIdentifier",
+                          "text": "L5",
+                          "children": [
+                            {
+                              "type": "Terminal",
+                              "text": "L5"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "classBody",
+                          "text": "{publicstaticvoidprint(){for(inti=0;i<5;i++){System.out.print(\"Welcome to Java\\n\");}}publicstaticvoidmain(String[]args){print();}}",
+                          "children": [
+                            {
+                              "type": "Terminal",
+                              "text": "{"
+                            },
+                            {
+                              "type": "classBodyDeclaration",
+                              "text": "publicstaticvoidprint(){for(inti=0;i<5;i++){System.out.print(\"Welcome to Java\\n\");}}",
+                              "children": [
+                                {
+                                  "type": "classMemberDeclaration",
+                                  "text": "publicstaticvoidprint(){for(inti=0;i<5;i++){System.out.print(\"Welcome to Java\\n\");}}",
+                                  "children": [
+                                    {
+                                      "type": "MethodDeclaration",
+                                      "name": null,
+                                      "returnType": "void",
+                                      "children": {
+                                        "type": "methodDeclaration",
+                                        "text": "publicstaticvoidprint(){for(inti=0;i<5;i++){System.out.print(\"Welcome to Java\\n\");}}",
+                                        "children": [
+                                          {
+                                            "type": "methodModifier",
+                                            "text": "public",
+                                            "children": [
+                                              {
+                                                "type": "Terminal",
+                                                "text": "public"
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "type": "methodModifier",
+                                            "text": "static",
+                                            "children": [
+                                              {
+                                                "type": "Terminal",
+                                                "text": "static"
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "type": "methodHeader",
+                                            "text": "voidprint()",
+                                            "children": [
+                                              {
+                                                "type": "result",
+                                                "text": "void",
+                                                "children": [
+                                                  {
+                                                    "type": "Terminal",
+                                                    "text": "void"
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "type": "methodDeclarator",
+                                                "text": "print()",
+                                                "children": [
+                                                  {
+                                                    "type": "identifier",
+                                                    "text": "print",
+                                                    "children": [
+                                                      {
+                                                        "type": "Terminal",
+                                                        "text": "print"
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "type": "Terminal",
+                                                    "text": "("
+                                                  },
+                                                  {
+                                                    "type": "Terminal",
+                                                    "text": ")"
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "type": "methodBody",
+                                            "text": "{for(inti=0;i<5;i++){System.out.print(\"Welcome to Java\\n\");}}",
+                                            "children": [
+                                              {
+                                                "type": "block",
+                                                "text": "{for(inti=0;i<5;i++){System.out.print(\"Welcome to Java\\n\");}}",
+                                                "children": [
+                                                  {
+                                                    "type": "Terminal",
+                                                    "text": "{"
+                                                  },
+                                                  {
+                                                    "type": "blockStatements",
+                                                    "text": "for(inti=0;i<5;i++){System.out.print(\"Welcome to Java\\n\");}",
+                                                    "children": [
+                                                      {
+                                                        "type": "blockStatement",
+                                                        "text": "for(inti=0;i<5;i++){System.out.print(\"Welcome to Java\\n\");}",
+                                                        "children": [
+                                                          {
+                                                            "type": "Statement",
+                                                            "text": "for(inti=0;i<5;i++){System.out.print(\"Welcome to Java\\n\");}",
+                                                            "children": {
+                                                              "type": "statement",
+                                                              "text": "for(inti=0;i<5;i++){System.out.print(\"Welcome to Java\\n\");}",
+                                                              "children": [
+                                                                {
+                                                                  "type": "forStatement",
+                                                                  "text": "for(inti=0;i<5;i++){System.out.print(\"Welcome to Java\\n\");}",
+                                                                  "children": [
+                                                                    {
+                                                                      "type": "basicForStatement",
+                                                                      "text": "for(inti=0;i<5;i++){System.out.print(\"Welcome to Java\\n\");}",
+                                                                      "children": [
+                                                                        {
+                                                                          "type": "Terminal",
+                                                                          "text": "for"
+                                                                        },
+                                                                        {
+                                                                          "type": "Terminal",
+                                                                          "text": "("
+                                                                        },
+                                                                        {
+                                                                          "type": "forInit",
+                                                                          "text": "inti=0",
+                                                                          "children": [
+                                                                            {
+                                                                              "type": "localVariableDeclaration",
+                                                                              "text": "inti=0",
+                                                                              "children": [
+                                                                                {
+                                                                                  "type": "localVariableType",
+                                                                                  "text": "int",
+                                                                                  "children": [
+                                                                                    {
+                                                                                      "type": "unannType",
+                                                                                      "text": "int",
+                                                                                      "children": [
+                                                                                        {
+                                                                                          "type": "unannPrimitiveType",
+                                                                                          "text": "int",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "type": "numericType",
+                                                                                              "text": "int",
+                                                                                              "children": [
+                                                                                                {
+                                                                                                  "type": "integralType",
+                                                                                                  "text": "int",
+                                                                                                  "children": [
+                                                                                                    {
+                                                                                                      "type": "Terminal",
+                                                                                                      "text": "int"
+                                                                                                    }
+                                                                                                  ]
+                                                                                                }
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        }
+                                                                                      ]
+                                                                                    }
+                                                                                  ]
+                                                                                },
+                                                                                {
+                                                                                  "type": "variableDeclaratorList",
+                                                                                  "text": "i=0",
+                                                                                  "children": [
+                                                                                    {
+                                                                                      "type": "variableDeclarator",
+                                                                                      "text": "i=0",
+                                                                                      "children": [
+                                                                                        {
+                                                                                          "type": "variableDeclaratorId",
+                                                                                          "text": "i",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "type": "identifier",
+                                                                                              "text": "i",
+                                                                                              "children": [
+                                                                                                {
+                                                                                                  "type": "Terminal",
+                                                                                                  "text": "i"
+                                                                                                }
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        },
+                                                                                        {
+                                                                                          "type": "Terminal",
+                                                                                          "text": "="
+                                                                                        },
+                                                                                        {
+                                                                                          "type": "variableInitializer",
+                                                                                          "text": "0",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "type": "expression",
+                                                                                              "text": "0",
+                                                                                              "children": [
+                                                                                                {
+                                                                                                  "type": "assignmentExpression",
+                                                                                                  "text": "0",
+                                                                                                  "children": [
+                                                                                                    {
+                                                                                                      "type": "conditionalExpression",
+                                                                                                      "text": "0",
+                                                                                                      "children": [
+                                                                                                        {
+                                                                                                          "type": "conditionalOrExpression",
+                                                                                                          "text": "0",
+                                                                                                          "children": [
+                                                                                                            {
+                                                                                                              "type": "conditionalAndExpression",
+                                                                                                              "text": "0",
+                                                                                                              "children": [
+                                                                                                                {
+                                                                                                                  "type": "inclusiveOrExpression",
+                                                                                                                  "text": "0",
+                                                                                                                  "children": [
+                                                                                                                    {
+                                                                                                                      "type": "exclusiveOrExpression",
+                                                                                                                      "text": "0",
+                                                                                                                      "children": [
+                                                                                                                        {
+                                                                                                                          "type": "andExpression",
+                                                                                                                          "text": "0",
+                                                                                                                          "children": [
+                                                                                                                            {
+                                                                                                                              "type": "equalityExpression",
+                                                                                                                              "text": "0",
+                                                                                                                              "children": [
+                                                                                                                                {
+                                                                                                                                  "type": "relationalExpression",
+                                                                                                                                  "text": "0",
+                                                                                                                                  "children": [
+                                                                                                                                    {
+                                                                                                                                      "type": "shiftExpression",
+                                                                                                                                      "text": "0",
+                                                                                                                                      "children": [
+                                                                                                                                        {
+                                                                                                                                          "type": "additiveExpression",
+                                                                                                                                          "text": "0",
+                                                                                                                                          "children": [
+                                                                                                                                            {
+                                                                                                                                              "type": "multiplicativeExpression",
+                                                                                                                                              "text": "0",
+                                                                                                                                              "children": [
+                                                                                                                                                {
+                                                                                                                                                  "type": "unaryExpression",
+                                                                                                                                                  "text": "0",
+                                                                                                                                                  "children": [
+                                                                                                                                                    {
+                                                                                                                                                      "type": "unaryExpressionNotPlusMinus",
+                                                                                                                                                      "text": "0",
+                                                                                                                                                      "children": [
+                                                                                                                                                        {
+                                                                                                                                                          "type": "postfixExpression",
+                                                                                                                                                          "text": "0",
+                                                                                                                                                          "children": [
+                                                                                                                                                            {
+                                                                                                                                                              "type": "primary",
+                                                                                                                                                              "text": "0",
+                                                                                                                                                              "children": [
+                                                                                                                                                                {
+                                                                                                                                                                  "type": "primaryNoNewArray",
+                                                                                                                                                                  "text": "0",
+                                                                                                                                                                  "children": [
+                                                                                                                                                                    {
+                                                                                                                                                                      "type": "literal",
+                                                                                                                                                                      "text": "0",
+                                                                                                                                                                      "children": [
+                                                                                                                                                                        {
+                                                                                                                                                                          "type": "Terminal",
+                                                                                                                                                                          "text": "0"
+                                                                                                                                                                        }
+                                                                                                                                                                      ]
+                                                                                                                                                                    }
+                                                                                                                                                                  ]
+                                                                                                                                                                }
+                                                                                                                                                              ]
+                                                                                                                                                            }
+                                                                                                                                                          ]
+                                                                                                                                                        }
+                                                                                                                                                      ]
+                                                                                                                                                    }
+                                                                                                                                                  ]
+                                                                                                                                                }
+                                                                                                                                              ]
+                                                                                                                                            }
+                                                                                                                                          ]
+                                                                                                                                        }
+                                                                                                                                      ]
+                                                                                                                                    }
+                                                                                                                                  ]
+                                                                                                                                }
+                                                                                                                              ]
+                                                                                                                            }
+                                                                                                                          ]
+                                                                                                                        }
+                                                                                                                      ]
+                                                                                                                    }
+                                                                                                                  ]
+                                                                                                                }
+                                                                                                              ]
+                                                                                                            }
+                                                                                                          ]
+                                                                                                        }
+                                                                                                      ]
+                                                                                                    }
+                                                                                                  ]
+                                                                                                }
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        }
+                                                                                      ]
+                                                                                    }
+                                                                                  ]
+                                                                                }
+                                                                              ]
+                                                                            }
+                                                                          ]
+                                                                        },
+                                                                        {
+                                                                          "type": "Terminal",
+                                                                          "text": ";"
+                                                                        },
+                                                                        {
+                                                                          "type": "expression",
+                                                                          "text": "i<5",
+                                                                          "children": [
+                                                                            {
+                                                                              "type": "assignmentExpression",
+                                                                              "text": "i<5",
+                                                                              "children": [
+                                                                                {
+                                                                                  "type": "conditionalExpression",
+                                                                                  "text": "i<5",
+                                                                                  "children": [
+                                                                                    {
+                                                                                      "type": "conditionalOrExpression",
+                                                                                      "text": "i<5",
+                                                                                      "children": [
+                                                                                        {
+                                                                                          "type": "conditionalAndExpression",
+                                                                                          "text": "i<5",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "type": "inclusiveOrExpression",
+                                                                                              "text": "i<5",
+                                                                                              "children": [
+                                                                                                {
+                                                                                                  "type": "exclusiveOrExpression",
+                                                                                                  "text": "i<5",
+                                                                                                  "children": [
+                                                                                                    {
+                                                                                                      "type": "andExpression",
+                                                                                                      "text": "i<5",
+                                                                                                      "children": [
+                                                                                                        {
+                                                                                                          "type": "equalityExpression",
+                                                                                                          "text": "i<5",
+                                                                                                          "children": [
+                                                                                                            {
+                                                                                                              "type": "relationalExpression",
+                                                                                                              "text": "i<5",
+                                                                                                              "children": [
+                                                                                                                {
+                                                                                                                  "type": "relationalExpression",
+                                                                                                                  "text": "i",
+                                                                                                                  "children": [
+                                                                                                                    {
+                                                                                                                      "type": "shiftExpression",
+                                                                                                                      "text": "i",
+                                                                                                                      "children": [
+                                                                                                                        {
+                                                                                                                          "type": "additiveExpression",
+                                                                                                                          "text": "i",
+                                                                                                                          "children": [
+                                                                                                                            {
+                                                                                                                              "type": "multiplicativeExpression",
+                                                                                                                              "text": "i",
+                                                                                                                              "children": [
+                                                                                                                                {
+                                                                                                                                  "type": "unaryExpression",
+                                                                                                                                  "text": "i",
+                                                                                                                                  "children": [
+                                                                                                                                    {
+                                                                                                                                      "type": "unaryExpressionNotPlusMinus",
+                                                                                                                                      "text": "i",
+                                                                                                                                      "children": [
+                                                                                                                                        {
+                                                                                                                                          "type": "postfixExpression",
+                                                                                                                                          "text": "i",
+                                                                                                                                          "children": [
+                                                                                                                                            {
+                                                                                                                                              "type": "expressionName",
+                                                                                                                                              "text": "i",
+                                                                                                                                              "children": [
+                                                                                                                                                {
+                                                                                                                                                  "type": "identifier",
+                                                                                                                                                  "text": "i",
+                                                                                                                                                  "children": [
+                                                                                                                                                    {
+                                                                                                                                                      "type": "Terminal",
+                                                                                                                                                      "text": "i"
+                                                                                                                                                    }
+                                                                                                                                                  ]
+                                                                                                                                                }
+                                                                                                                                              ]
+                                                                                                                                            }
+                                                                                                                                          ]
+                                                                                                                                        }
+                                                                                                                                      ]
+                                                                                                                                    }
+                                                                                                                                  ]
+                                                                                                                                }
+                                                                                                                              ]
+                                                                                                                            }
+                                                                                                                          ]
+                                                                                                                        }
+                                                                                                                      ]
+                                                                                                                    }
+                                                                                                                  ]
+                                                                                                                },
+                                                                                                                {
+                                                                                                                  "type": "Terminal",
+                                                                                                                  "text": "<"
+                                                                                                                },
+                                                                                                                {
+                                                                                                                  "type": "shiftExpression",
+                                                                                                                  "text": "5",
+                                                                                                                  "children": [
+                                                                                                                    {
+                                                                                                                      "type": "additiveExpression",
+                                                                                                                      "text": "5",
+                                                                                                                      "children": [
+                                                                                                                        {
+                                                                                                                          "type": "multiplicativeExpression",
+                                                                                                                          "text": "5",
+                                                                                                                          "children": [
+                                                                                                                            {
+                                                                                                                              "type": "unaryExpression",
+                                                                                                                              "text": "5",
+                                                                                                                              "children": [
+                                                                                                                                {
+                                                                                                                                  "type": "unaryExpressionNotPlusMinus",
+                                                                                                                                  "text": "5",
+                                                                                                                                  "children": [
+                                                                                                                                    {
+                                                                                                                                      "type": "postfixExpression",
+                                                                                                                                      "text": "5",
+                                                                                                                                      "children": [
+                                                                                                                                        {
+                                                                                                                                          "type": "primary",
+                                                                                                                                          "text": "5",
+                                                                                                                                          "children": [
+                                                                                                                                            {
+                                                                                                                                              "type": "primaryNoNewArray",
+                                                                                                                                              "text": "5",
+                                                                                                                                              "children": [
+                                                                                                                                                {
+                                                                                                                                                  "type": "literal",
+                                                                                                                                                  "text": "5",
+                                                                                                                                                  "children": [
+                                                                                                                                                    {
+                                                                                                                                                      "type": "Terminal",
+                                                                                                                                                      "text": "5"
+                                                                                                                                                    }
+                                                                                                                                                  ]
+                                                                                                                                                }
+                                                                                                                                              ]
+                                                                                                                                            }
+                                                                                                                                          ]
+                                                                                                                                        }
+                                                                                                                                      ]
+                                                                                                                                    }
+                                                                                                                                  ]
+                                                                                                                                }
+                                                                                                                              ]
+                                                                                                                            }
+                                                                                                                          ]
+                                                                                                                        }
+                                                                                                                      ]
+                                                                                                                    }
+                                                                                                                  ]
+                                                                                                                }
+                                                                                                              ]
+                                                                                                            }
+                                                                                                          ]
+                                                                                                        }
+                                                                                                      ]
+                                                                                                    }
+                                                                                                  ]
+                                                                                                }
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        }
+                                                                                      ]
+                                                                                    }
+                                                                                  ]
+                                                                                }
+                                                                              ]
+                                                                            }
+                                                                          ]
+                                                                        },
+                                                                        {
+                                                                          "type": "Terminal",
+                                                                          "text": ";"
+                                                                        },
+                                                                        {
+                                                                          "type": "forUpdate",
+                                                                          "text": "i++",
+                                                                          "children": [
+                                                                            {
+                                                                              "type": "statementExpressionList",
+                                                                              "text": "i++",
+                                                                              "children": [
+                                                                                {
+                                                                                  "type": "statementExpression",
+                                                                                  "text": "i++",
+                                                                                  "children": [
+                                                                                    {
+                                                                                      "type": "postIncrementExpression",
+                                                                                      "text": "i++",
+                                                                                      "children": [
+                                                                                        {
+                                                                                          "type": "postfixExpression",
+                                                                                          "text": "i",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "type": "expressionName",
+                                                                                              "text": "i",
+                                                                                              "children": [
+                                                                                                {
+                                                                                                  "type": "identifier",
+                                                                                                  "text": "i",
+                                                                                                  "children": [
+                                                                                                    {
+                                                                                                      "type": "Terminal",
+                                                                                                      "text": "i"
+                                                                                                    }
+                                                                                                  ]
+                                                                                                }
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        },
+                                                                                        {
+                                                                                          "type": "Terminal",
+                                                                                          "text": "++"
+                                                                                        }
+                                                                                      ]
+                                                                                    }
+                                                                                  ]
+                                                                                }
+                                                                              ]
+                                                                            }
+                                                                          ]
+                                                                        },
+                                                                        {
+                                                                          "type": "Terminal",
+                                                                          "text": ")"
+                                                                        },
+                                                                        {
+                                                                          "type": "Statement",
+                                                                          "text": "{System.out.print(\"Welcome to Java\\n\");}",
+                                                                          "children": {
+                                                                            "type": "statement",
+                                                                            "text": "{System.out.print(\"Welcome to Java\\n\");}",
+                                                                            "children": [
+                                                                              {
+                                                                                "type": "statementWithoutTrailingSubstatement",
+                                                                                "text": "{System.out.print(\"Welcome to Java\\n\");}",
+                                                                                "children": [
+                                                                                  {
+                                                                                    "type": "block",
+                                                                                    "text": "{System.out.print(\"Welcome to Java\\n\");}",
+                                                                                    "children": [
+                                                                                      {
+                                                                                        "type": "Terminal",
+                                                                                        "text": "{"
+                                                                                      },
+                                                                                      {
+                                                                                        "type": "blockStatements",
+                                                                                        "text": "System.out.print(\"Welcome to Java\\n\");",
+                                                                                        "children": [
+                                                                                          {
+                                                                                            "type": "blockStatement",
+                                                                                            "text": "System.out.print(\"Welcome to Java\\n\");",
+                                                                                            "children": [
+                                                                                              {
+                                                                                                "type": "Statement",
+                                                                                                "text": "System.out.print(\"Welcome to Java\\n\");",
+                                                                                                "children": {
+                                                                                                  "type": "statement",
+                                                                                                  "text": "System.out.print(\"Welcome to Java\\n\");",
+                                                                                                  "children": [
+                                                                                                    {
+                                                                                                      "type": "statementWithoutTrailingSubstatement",
+                                                                                                      "text": "System.out.print(\"Welcome to Java\\n\");",
+                                                                                                      "children": [
+                                                                                                        {
+                                                                                                          "type": "expressionStatement",
+                                                                                                          "text": "System.out.print(\"Welcome to Java\\n\");",
+                                                                                                          "children": [
+                                                                                                            {
+                                                                                                              "type": "statementExpression",
+                                                                                                              "text": "System.out.print(\"Welcome to Java\\n\")",
+                                                                                                              "children": [
+                                                                                                                {
+                                                                                                                  "type": "methodInvocation",
+                                                                                                                  "text": "System.out.print(\"Welcome to Java\\n\")",
+                                                                                                                  "children": [
+                                                                                                                    {
+                                                                                                                      "type": "typeName",
+                                                                                                                      "text": "System.out",
+                                                                                                                      "children": [
+                                                                                                                        {
+                                                                                                                          "type": "packageName",
+                                                                                                                          "text": "System.out",
+                                                                                                                          "children": [
+                                                                                                                            {
+                                                                                                                              "type": "identifier",
+                                                                                                                              "text": "System",
+                                                                                                                              "children": [
+                                                                                                                                {
+                                                                                                                                  "type": "Terminal",
+                                                                                                                                  "text": "System"
+                                                                                                                                }
+                                                                                                                              ]
+                                                                                                                            },
+                                                                                                                            {
+                                                                                                                              "type": "Terminal",
+                                                                                                                              "text": "."
+                                                                                                                            },
+                                                                                                                            {
+                                                                                                                              "type": "packageName",
+                                                                                                                              "text": "out",
+                                                                                                                              "children": [
+                                                                                                                                {
+                                                                                                                                  "type": "identifier",
+                                                                                                                                  "text": "out",
+                                                                                                                                  "children": [
+                                                                                                                                    {
+                                                                                                                                      "type": "Terminal",
+                                                                                                                                      "text": "out"
+                                                                                                                                    }
+                                                                                                                                  ]
+                                                                                                                                }
+                                                                                                                              ]
+                                                                                                                            }
+                                                                                                                          ]
+                                                                                                                        }
+                                                                                                                      ]
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                      "type": "Terminal",
+                                                                                                                      "text": "."
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                      "type": "identifier",
+                                                                                                                      "text": "print",
+                                                                                                                      "children": [
+                                                                                                                        {
+                                                                                                                          "type": "Terminal",
+                                                                                                                          "text": "print"
+                                                                                                                        }
+                                                                                                                      ]
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                      "type": "Terminal",
+                                                                                                                      "text": "("
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                      "type": "argumentList",
+                                                                                                                      "text": "\"Welcome to Java\\n\"",
+                                                                                                                      "children": [
+                                                                                                                        {
+                                                                                                                          "type": "expression",
+                                                                                                                          "text": "\"Welcome to Java\\n\"",
+                                                                                                                          "children": [
+                                                                                                                            {
+                                                                                                                              "type": "assignmentExpression",
+                                                                                                                              "text": "\"Welcome to Java\\n\"",
+                                                                                                                              "children": [
+                                                                                                                                {
+                                                                                                                                  "type": "conditionalExpression",
+                                                                                                                                  "text": "\"Welcome to Java\\n\"",
+                                                                                                                                  "children": [
+                                                                                                                                    {
+                                                                                                                                      "type": "conditionalOrExpression",
+                                                                                                                                      "text": "\"Welcome to Java\\n\"",
+                                                                                                                                      "children": [
+                                                                                                                                        {
+                                                                                                                                          "type": "conditionalAndExpression",
+                                                                                                                                          "text": "\"Welcome to Java\\n\"",
+                                                                                                                                          "children": [
+                                                                                                                                            {
+                                                                                                                                              "type": "inclusiveOrExpression",
+                                                                                                                                              "text": "\"Welcome to Java\\n\"",
+                                                                                                                                              "children": [
+                                                                                                                                                {
+                                                                                                                                                  "type": "exclusiveOrExpression",
+                                                                                                                                                  "text": "\"Welcome to Java\\n\"",
+                                                                                                                                                  "children": [
+                                                                                                                                                    {
+                                                                                                                                                      "type": "andExpression",
+                                                                                                                                                      "text": "\"Welcome to Java\\n\"",
+                                                                                                                                                      "children": [
+                                                                                                                                                        {
+                                                                                                                                                          "type": "equalityExpression",
+                                                                                                                                                          "text": "\"Welcome to Java\\n\"",
+                                                                                                                                                          "children": [
+                                                                                                                                                            {
+                                                                                                                                                              "type": "relationalExpression",
+                                                                                                                                                              "text": "\"Welcome to Java\\n\"",
+                                                                                                                                                              "children": [
+                                                                                                                                                                {
+                                                                                                                                                                  "type": "shiftExpression",
+                                                                                                                                                                  "text": "\"Welcome to Java\\n\"",
+                                                                                                                                                                  "children": [
+                                                                                                                                                                    {
+                                                                                                                                                                      "type": "additiveExpression",
+                                                                                                                                                                      "text": "\"Welcome to Java\\n\"",
+                                                                                                                                                                      "children": [
+                                                                                                                                                                        {
+                                                                                                                                                                          "type": "multiplicativeExpression",
+                                                                                                                                                                          "text": "\"Welcome to Java\\n\"",
+                                                                                                                                                                          "children": [
+                                                                                                                                                                            {
+                                                                                                                                                                              "type": "unaryExpression",
+                                                                                                                                                                              "text": "\"Welcome to Java\\n\"",
+                                                                                                                                                                              "children": [
+                                                                                                                                                                                {
+                                                                                                                                                                                  "type": "unaryExpressionNotPlusMinus",
+                                                                                                                                                                                  "text": "\"Welcome to Java\\n\"",
+                                                                                                                                                                                  "children": [
+                                                                                                                                                                                    {
+                                                                                                                                                                                      "type": "postfixExpression",
+                                                                                                                                                                                      "text": "\"Welcome to Java\\n\"",
+                                                                                                                                                                                      "children": [
+                                                                                                                                                                                        {
+                                                                                                                                                                                          "type": "primary",
+                                                                                                                                                                                          "text": "\"Welcome to Java\\n\"",
+                                                                                                                                                                                          "children": [
+                                                                                                                                                                                            {
+                                                                                                                                                                                              "type": "primaryNoNewArray",
+                                                                                                                                                                                              "text": "\"Welcome to Java\\n\"",
+                                                                                                                                                                                              "children": [
+                                                                                                                                                                                                {
+                                                                                                                                                                                                  "type": "literal",
+                                                                                                                                                                                                  "text": "\"Welcome to Java\\n\"",
+                                                                                                                                                                                                  "children": [
+                                                                                                                                                                                                    {
+                                                                                                                                                                                                      "type": "Terminal",
+                                                                                                                                                                                                      "text": "\"Welcome to Java\\n\""
+                                                                                                                                                                                                    }
+                                                                                                                                                                                                  ]
+                                                                                                                                                                                                }
+                                                                                                                                                                                              ]
+                                                                                                                                                                                            }
+                                                                                                                                                                                          ]
+                                                                                                                                                                                        }
+                                                                                                                                                                                      ]
+                                                                                                                                                                                    }
+                                                                                                                                                                                  ]
+                                                                                                                                                                                }
+                                                                                                                                                                              ]
+                                                                                                                                                                            }
+                                                                                                                                                                          ]
+                                                                                                                                                                        }
+                                                                                                                                                                      ]
+                                                                                                                                                                    }
+                                                                                                                                                                  ]
+                                                                                                                                                                }
+                                                                                                                                                              ]
+                                                                                                                                                            }
+                                                                                                                                                          ]
+                                                                                                                                                        }
+                                                                                                                                                      ]
+                                                                                                                                                    }
+                                                                                                                                                  ]
+                                                                                                                                                }
+                                                                                                                                              ]
+                                                                                                                                            }
+                                                                                                                                          ]
+                                                                                                                                        }
+                                                                                                                                      ]
+                                                                                                                                    }
+                                                                                                                                  ]
+                                                                                                                                }
+                                                                                                                              ]
+                                                                                                                            }
+                                                                                                                          ]
+                                                                                                                        }
+                                                                                                                      ]
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                      "type": "Terminal",
+                                                                                                                      "text": ")"
+                                                                                                                    }
+                                                                                                                  ]
+                                                                                                                }
+                                                                                                              ]
+                                                                                                            },
+                                                                                                            {
+                                                                                                              "type": "Terminal",
+                                                                                                              "text": ";"
+                                                                                                            }
+                                                                                                          ]
+                                                                                                        }
+                                                                                                      ]
+                                                                                                    }
+                                                                                                  ]
+                                                                                                }
+                                                                                              }
+                                                                                            ]
+                                                                                          }
+                                                                                        ]
+                                                                                      },
+                                                                                      {
+                                                                                        "type": "Terminal",
+                                                                                        "text": "}"
+                                                                                      }
+                                                                                    ]
+                                                                                  }
+                                                                                ]
+                                                                              }
+                                                                            ]
+                                                                          }
+                                                                        }
+                                                                      ]
+                                                                    }
+                                                                  ]
+                                                                }
+                                                              ]
+                                                            }
+                                                          }
+                                                        ]
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "type": "Terminal",
+                                                    "text": "}"
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "classBodyDeclaration",
+                              "text": "publicstaticvoidmain(String[]args){print();}",
+                              "children": [
+                                {
+                                  "type": "classMemberDeclaration",
+                                  "text": "publicstaticvoidmain(String[]args){print();}",
+                                  "children": [
+                                    {
+                                      "type": "MethodDeclaration",
+                                      "name": null,
+                                      "returnType": "void",
+                                      "children": {
+                                        "type": "methodDeclaration",
+                                        "text": "publicstaticvoidmain(String[]args){print();}",
+                                        "children": [
+                                          {
+                                            "type": "methodModifier",
+                                            "text": "public",
+                                            "children": [
+                                              {
+                                                "type": "Terminal",
+                                                "text": "public"
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "type": "methodModifier",
+                                            "text": "static",
+                                            "children": [
+                                              {
+                                                "type": "Terminal",
+                                                "text": "static"
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "type": "methodHeader",
+                                            "text": "voidmain(String[]args)",
+                                            "children": [
+                                              {
+                                                "type": "result",
+                                                "text": "void",
+                                                "children": [
+                                                  {
+                                                    "type": "Terminal",
+                                                    "text": "void"
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "type": "methodDeclarator",
+                                                "text": "main(String[]args)",
+                                                "children": [
+                                                  {
+                                                    "type": "identifier",
+                                                    "text": "main",
+                                                    "children": [
+                                                      {
+                                                        "type": "Terminal",
+                                                        "text": "main"
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "type": "Terminal",
+                                                    "text": "("
+                                                  },
+                                                  {
+                                                    "type": "formalParameterList",
+                                                    "text": "String[]args",
+                                                    "children": [
+                                                      {
+                                                        "type": "formalParameter",
+                                                        "text": "String[]args",
+                                                        "children": [
+                                                          {
+                                                            "type": "unannType",
+                                                            "text": "String[]",
+                                                            "children": [
+                                                              {
+                                                                "type": "unannReferenceType",
+                                                                "text": "String[]",
+                                                                "children": [
+                                                                  {
+                                                                    "type": "unannArrayType",
+                                                                    "text": "String[]",
+                                                                    "children": [
+                                                                      {
+                                                                        "type": "unannClassOrInterfaceType",
+                                                                        "text": "String",
+                                                                        "children": [
+                                                                          {
+                                                                            "type": "typeIdentifier",
+                                                                            "text": "String",
+                                                                            "children": [
+                                                                              {
+                                                                                "type": "Terminal",
+                                                                                "text": "String"
+                                                                              }
+                                                                            ]
+                                                                          }
+                                                                        ]
+                                                                      },
+                                                                      {
+                                                                        "type": "dims",
+                                                                        "text": "[]",
+                                                                        "children": [
+                                                                          {
+                                                                            "type": "Terminal",
+                                                                            "text": "["
+                                                                          },
+                                                                          {
+                                                                            "type": "Terminal",
+                                                                            "text": "]"
+                                                                          }
+                                                                        ]
+                                                                      }
+                                                                    ]
+                                                                  }
+                                                                ]
+                                                              }
+                                                            ]
+                                                          },
+                                                          {
+                                                            "type": "variableDeclaratorId",
+                                                            "text": "args",
+                                                            "children": [
+                                                              {
+                                                                "type": "identifier",
+                                                                "text": "args",
+                                                                "children": [
+                                                                  {
+                                                                    "type": "Terminal",
+                                                                    "text": "args"
+                                                                  }
+                                                                ]
+                                                              }
+                                                            ]
+                                                          }
+                                                        ]
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "type": "Terminal",
+                                                    "text": ")"
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "type": "methodBody",
+                                            "text": "{print();}",
+                                            "children": [
+                                              {
+                                                "type": "block",
+                                                "text": "{print();}",
+                                                "children": [
+                                                  {
+                                                    "type": "Terminal",
+                                                    "text": "{"
+                                                  },
+                                                  {
+                                                    "type": "blockStatements",
+                                                    "text": "print();",
+                                                    "children": [
+                                                      {
+                                                        "type": "blockStatement",
+                                                        "text": "print();",
+                                                        "children": [
+                                                          {
+                                                            "type": "Statement",
+                                                            "text": "print();",
+                                                            "children": {
+                                                              "type": "statement",
+                                                              "text": "print();",
+                                                              "children": [
+                                                                {
+                                                                  "type": "statementWithoutTrailingSubstatement",
+                                                                  "text": "print();",
+                                                                  "children": [
+                                                                    {
+                                                                      "type": "expressionStatement",
+                                                                      "text": "print();",
+                                                                      "children": [
+                                                                        {
+                                                                          "type": "statementExpression",
+                                                                          "text": "print()",
+                                                                          "children": [
+                                                                            {
+                                                                              "type": "methodInvocation",
+                                                                              "text": "print()",
+                                                                              "children": [
+                                                                                {
+                                                                                  "type": "methodName",
+                                                                                  "text": "print",
+                                                                                  "children": [
+                                                                                    {
+                                                                                      "type": "unqualifiedMethodIdentifier",
+                                                                                      "text": "print",
+                                                                                      "children": [
+                                                                                        {
+                                                                                          "type": "Terminal",
+                                                                                          "text": "print"
+                                                                                        }
+                                                                                      ]
+                                                                                    }
+                                                                                  ]
+                                                                                },
+                                                                                {
+                                                                                  "type": "Terminal",
+                                                                                  "text": "("
+                                                                                },
+                                                                                {
+                                                                                  "type": "Terminal",
+                                                                                  "text": ")"
+                                                                                }
+                                                                              ]
+                                                                            }
+                                                                          ]
+                                                                        },
+                                                                        {
+                                                                          "type": "Terminal",
+                                                                          "text": ";"
+                                                                        }
+                                                                      ]
+                                                                    }
+                                                                  ]
+                                                                }
+                                                              ]
+                                                            }
+                                                          }
+                                                        ]
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "type": "Terminal",
+                                                    "text": "}"
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Terminal",
+                              "text": "}"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
