@@ -32,14 +32,6 @@ pip-wheel-metadata/
 !src/antlr/*.g4
 
 
-# ====================================
-# Dataset and Preprocessed Files
-# ====================================
-ast_data/
-*.json
-
-
-
 # ==============================
 # Dataset and Preprocessed Files
 # ==============================
