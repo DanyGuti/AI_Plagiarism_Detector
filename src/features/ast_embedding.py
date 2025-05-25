@@ -4,9 +4,9 @@ This module contains functions to traverse the AST (Abstract Syntax Tree)
 and extract features from it.
 '''
 import json
-import numpy as np
 from typing import Union, List, Optional, TypedDict
 from sklearn.preprocessing import LabelEncoder
+import numpy as np
 
 
 # Define a TypedDict for the AST node
@@ -16,6 +16,7 @@ class ASTNode(TypedDict):
         to store the type, text, name, and children of the node.
     '''
     type: str
+    token: str
     text: Optional[str]
     name: Optional[str]
     children: Union[List['ASTNode'], 'ASTNode']
@@ -40,7 +41,7 @@ def traverse_ast(
     if not isinstance(node, dict):
         return features
     node_type = node.get("type", "UNK")
-
+    token = node.get("token") or node.get("value") or node.get("text") or None
     children = node.get("children", [])
 
     # Normalize children to a list
@@ -50,11 +51,13 @@ def traverse_ast(
         children = []
 
     # Save the features for the current node
+    # Probably need the feature of tracking the path from the root to the leaf
     features.append({
         "type": node_type,
+        "token": token,
         "depth": depth,
         "children_count": len(children),
-        "is_leaf": len(children) == 0
+        "is_leaf": len(children) == 0,
     })
 
     for child in children:
@@ -88,20 +91,29 @@ def encode_features(
         np.array: The encoded features as a matrix.
     '''
     type_encoder = LabelEncoder()
-    all_types = [feature["type"] for feature in features]
-    type_encoder.fit(all_types)
-    type_ids = type_encoder.transform(all_types)
+    token_encoder = LabelEncoder()
 
-    # Each node will have 4 features:
-    # 1. Type ID
-    # 2. Depth
-    # 3. Number of children
-    # 4. Is leaf (1 if leaf, 0 otherwise)
-    matrix = np.zeros((len(features), 4), dtype=int)
+    all_types = [feature["type"] for feature in features]
+    all_tokens = [feature["token"] or "ε" for feature in features]
+
+    type_encoder.fit(all_types)
+    token_encoder.fit(all_tokens)
+
+    type_ids = type_encoder.transform(all_types)
+    token_ids = token_encoder.transform(all_tokens)
+
+    # Each node will have 5 features:
+    # 1. Type ID encoded
+    # 2. Token from terminal nodes encoded
+    # 3. Depth
+    # 4. Number of children
+    # 5. Is leaf (1 if leaf, 0 otherwise)
+    matrix = np.zeros((len(features), 5), dtype=int)
     for i, feature in enumerate(features):
         matrix[i, 0] = type_ids[i]
-        matrix[i, 1] = feature["depth"]
-        matrix[i, 2] = feature["children_count"]
-        matrix[i, 3] = int(feature["is_leaf"])
+        matrix[i, 1] = token_ids[i]
+        matrix[i, 2] = feature["depth"]
+        matrix[i, 3] = feature["children_count"]
+        matrix[i, 4] = int(feature["is_leaf"])
 
     return matrix

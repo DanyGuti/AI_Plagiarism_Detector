@@ -25,7 +25,8 @@
                       "children": [
                         {
                           "type": "Terminal",
-                          "text": "class"
+                          "text": "class",
+                          "token": "CLASS"
                         },
                         {
                           "type": "typeIdentifier",
@@ -33,7 +34,8 @@
                           "children": [
                             {
                               "type": "Terminal",
-                              "text": "multiarray"
+                              "text": "multiarray",
+                              "token": "Identifier"
                             }
                           ]
                         },
@@ -43,7 +45,8 @@
                           "children": [
                             {
                               "type": "Terminal",
-                              "text": "{"
+                              "text": "{",
+                              "token": "LBRACE"
                             },
                             {
                               "type": "classBodyDeclaration",
@@ -67,7 +70,8 @@
                                             "children": [
                                               {
                                                 "type": "Terminal",
-                                                "text": "public"
+                                                "text": "public",
+                                                "token": "PUBLIC"
                                               }
                                             ]
                                           },
@@ -77,7 +81,8 @@
                                             "children": [
                                               {
                                                 "type": "Terminal",
-                                                "text": "static"
+                                                "text": "static",
+                                                "token": "STATIC"
                                               }
                                             ]
                                           },
@@ -91,7 +96,8 @@
                                                 "children": [
                                                   {
                                                     "type": "Terminal",
-                                                    "text": "void"
+                                                    "text": "void",
+                                                    "token": "VOID"
                                                   }
                                                 ]
                                               },
@@ -105,13 +111,15 @@
                                                     "children": [
                                                       {
                                                         "type": "Terminal",
-                                                        "text": "main"
+                                                        "text": "main",
+                                                        "token": "Identifier"
                                                       }
                                                     ]
                                                   },
                                                   {
                                                     "type": "Terminal",
-                                                    "text": "("
+                                                    "text": "(",
+                                                    "token": "LPAREN"
                                                   },
                                                   {
                                                     "type": "formalParameterList",
@@ -143,7 +151,8 @@
                                                                             "children": [
                                                                               {
                                                                                 "type": "Terminal",
-                                                                                "text": "String"
+                                                                                "text": "String",
+                                                                                "token": "Identifier"
                                                                               }
                                                                             ]
                                                                           }
@@ -155,11 +164,13 @@
                                                                         "children": [
                                                                           {
                                                                             "type": "Terminal",
-                                                                            "text": "["
+                                                                            "text": "[",
+                                                                            "token": "LBRACK"
                                                                           },
                                                                           {
                                                                             "type": "Terminal",
-                                                                            "text": "]"
+                                                                            "text": "]",
+                                                                            "token": "RBRACK"
                                                                           }
                                                                         ]
                                                                       }
@@ -179,7 +190,8 @@
                                                                 "children": [
                                                                   {
                                                                     "type": "Terminal",
-                                                                    "text": "args"
+                                                                    "text": "args",
+                                                                    "token": "Identifier"
                                                                   }
                                                                 ]
                                                               }
@@ -191,7 +203,8 @@
                                                   },
                                                   {
                                                     "type": "Terminal",
-                                                    "text": ")"
+                                                    "text": ")",
+                                                    "token": "RPAREN"
                                                   }
                                                 ]
                                               }
@@ -207,7 +220,8 @@
                                                 "children": [
                                                   {
                                                     "type": "Terminal",
-                                                    "text": "{"
+                                                    "text": "{",
+                                                    "token": "LBRACE"
                                                   },
                                                   {
                                                     "type": "blockStatements",
@@ -247,7 +261,8 @@
                                                                                     "children": [
                                                                                       {
                                                                                         "type": "Terminal",
-                                                                                        "text": "Scanner"
+                                                                                        "text": "Scanner",
+                                                                                        "token": "Identifier"
                                                                                       }
                                                                                     ]
                                                                                   }
@@ -277,7 +292,8 @@
                                                                                 "children": [
                                                                                   {
                                                                                     "type": "Terminal",
-                                                                                    "text": "input"
+                                                                                    "text": "input",
+                                                                                    "token": "Identifier"
                                                                                   }
                                                                                 ]
                                                                               }
@@ -285,7 +301,8 @@
                                                                           },
                                                                           {
                                                                             "type": "Terminal",
-                                                                            "text": "="
+                                                                            "text": "=",
+                                                                            "token": "ASSIGN"
                                                                           },
                                                                           {
                                                                             "type": "variableInitializer",
@@ -369,7 +386,8 @@
                                                                                                                                                         "children": [
                                                                                                                                                           {
                                                                                                                                                             "type": "Terminal",
-                                                                                                                                                            "text": "new"
+                                                                                                                                                            "text": "new",
+                                                                                                                                                            "token": "NEW"
                                                                                                                                                           },
                                                                                                                                                           {
                                                                                                                                                             "type": "classOrInterfaceTypeToInstantiate",
@@ -381,7 +399,8 @@
                                                                                                                                                                 "children": [
                                                                                                                                                                   {
                                                                                                                                                                     "type": "Terminal",
-                                                                                                                                                                    "text": "Scanner"
+                                                                                                                                                                    "text": "Scanner",
+                                                                                                                                                                    "token": "Identifier"
                                                                                                                                                                   }
                                                                                                                                                                 ]
                                                                                                                                                               }
@@ -389,7 +408,8 @@
                                                                                                                                                           },
                                                                                                                                                           {
                                                                                                                                                             "type": "Terminal",
-                                                                                                                                                            "text": "("
+                                                                                                                                                            "text": "(",
+                                                                                                                                                            "token": "LPAREN"
                                                                                                                                                           },
                                                                                                                                                           {
                                                                                                                                                             "type": "argumentList",
@@ -473,7 +493,8 @@
                                                                                                                                                                                                                                         "children": [
                                                                                                                                                                                                                                           {
                                                                                                                                                                                                                                             "type": "Terminal",
-                                                                                                                                                                                                                                            "text": "System"
+                                                                                                                                                                                                                                            "text": "System",
+                                                                                                                                                                                                                                            "token": "Identifier"
                                                                                                                                                                                                                                           }
                                                                                                                                                                                                                                         ]
                                                                                                                                                                                                                                       }
@@ -481,7 +502,8 @@
                                                                                                                                                                                                                                   },
                                                                                                                                                                                                                                   {
                                                                                                                                                                                                                                     "type": "Terminal",
-                                                                                                                                                                                                                                    "text": "."
+                                                                                                                                                                                                                                    "text": ".",
+                                                                                                                                                                                                                                    "token": "DOT"
                                                                                                                                                                                                                                   },
                                                                                                                                                                                                                                   {
                                                                                                                                                                                                                                     "type": "identifier",
@@ -489,7 +511,8 @@
                                                                                                                                                                                                                                     "children": [
                                                                                                                                                                                                                                       {
                                                                                                                                                                                                                                         "type": "Terminal",
-                                                                                                                                                                                                                                        "text": "in"
+                                                                                                                                                                                                                                        "text": "in",
+                                                                                                                                                                                                                                        "token": "Identifier"
                                                                                                                                                                                                                                       }
                                                                                                                                                                                                                                     ]
                                                                                                                                                                                                                                   }
@@ -531,7 +554,8 @@
                                                                                                                                                           },
                                                                                                                                                           {
                                                                                                                                                             "type": "Terminal",
-                                                                                                                                                            "text": ")"
+                                                                                                                                                            "text": ")",
+                                                                                                                                                            "token": "RPAREN"
                                                                                                                                                           }
                                                                                                                                                         ]
                                                                                                                                                       }
@@ -581,7 +605,8 @@
                                                               },
                                                               {
                                                                 "type": "Terminal",
-                                                                "text": ";"
+                                                                "text": ";",
+                                                                "token": "SEMI"
                                                               }
                                                             ]
                                                           }
@@ -628,13 +653,15 @@
                                                                                           "children": [
                                                                                             {
                                                                                               "type": "Terminal",
-                                                                                              "text": "System"
+                                                                                              "text": "System",
+                                                                                              "token": "Identifier"
                                                                                             }
                                                                                           ]
                                                                                         },
                                                                                         {
                                                                                           "type": "Terminal",
-                                                                                          "text": "."
+                                                                                          "text": ".",
+                                                                                          "token": "DOT"
                                                                                         },
                                                                                         {
                                                                                           "type": "packageName",
@@ -646,7 +673,8 @@
                                                                                               "children": [
                                                                                                 {
                                                                                                   "type": "Terminal",
-                                                                                                  "text": "out"
+                                                                                                  "text": "out",
+                                                                                                  "token": "Identifier"
                                                                                                 }
                                                                                               ]
                                                                                             }
@@ -658,7 +686,8 @@
                                                                                 },
                                                                                 {
                                                                                   "type": "Terminal",
-                                                                                  "text": "."
+                                                                                  "text": ".",
+                                                                                  "token": "DOT"
                                                                                 },
                                                                                 {
                                                                                   "type": "identifier",
@@ -666,13 +695,15 @@
                                                                                   "children": [
                                                                                     {
                                                                                       "type": "Terminal",
-                                                                                      "text": "print"
+                                                                                      "text": "print",
+                                                                                      "token": "Identifier"
                                                                                     }
                                                                                   ]
                                                                                 },
                                                                                 {
                                                                                   "type": "Terminal",
-                                                                                  "text": "("
+                                                                                  "text": "(",
+                                                                                  "token": "LPAREN"
                                                                                 },
                                                                                 {
                                                                                   "type": "argumentList",
@@ -756,7 +787,8 @@
                                                                                                                                                               "children": [
                                                                                                                                                                 {
                                                                                                                                                                   "type": "Terminal",
-                                                                                                                                                                  "text": "\"Enter a 4 by 4 matrix row by row: \""
+                                                                                                                                                                  "text": "\"Enter a 4 by 4 matrix row by row: \"",
+                                                                                                                                                                  "token": "StringLiteral"
                                                                                                                                                                 }
                                                                                                                                                               ]
                                                                                                                                                             }
@@ -800,7 +832,8 @@
                                                                                 },
                                                                                 {
                                                                                   "type": "Terminal",
-                                                                                  "text": ")"
+                                                                                  "text": ")",
+                                                                                  "token": "RPAREN"
                                                                                 }
                                                                               ]
                                                                             }
@@ -808,7 +841,8 @@
                                                                         },
                                                                         {
                                                                           "type": "Terminal",
-                                                                          "text": ";"
+                                                                          "text": ";",
+                                                                          "token": "SEMI"
                                                                         }
                                                                       ]
                                                                     }
@@ -861,7 +895,8 @@
                                                                                             "children": [
                                                                                               {
                                                                                                 "type": "Terminal",
-                                                                                                "text": "double"
+                                                                                                "text": "double",
+                                                                                                "token": "DOUBLE"
                                                                                               }
                                                                                             ]
                                                                                           }
@@ -875,19 +910,23 @@
                                                                                     "children": [
                                                                                       {
                                                                                         "type": "Terminal",
-                                                                                        "text": "["
+                                                                                        "text": "[",
+                                                                                        "token": "LBRACK"
                                                                                       },
                                                                                       {
                                                                                         "type": "Terminal",
-                                                                                        "text": "]"
+                                                                                        "text": "]",
+                                                                                        "token": "RBRACK"
                                                                                       },
                                                                                       {
                                                                                         "type": "Terminal",
-                                                                                        "text": "["
+                                                                                        "text": "[",
+                                                                                        "token": "LBRACK"
                                                                                       },
                                                                                       {
                                                                                         "type": "Terminal",
-                                                                                        "text": "]"
+                                                                                        "text": "]",
+                                                                                        "token": "RBRACK"
                                                                                       }
                                                                                     ]
                                                                                   }
@@ -917,7 +956,8 @@
                                                                                 "children": [
                                                                                   {
                                                                                     "type": "Terminal",
-                                                                                    "text": "m"
+                                                                                    "text": "m",
+                                                                                    "token": "Identifier"
                                                                                   }
                                                                                 ]
                                                                               }
@@ -925,7 +965,8 @@
                                                                           },
                                                                           {
                                                                             "type": "Terminal",
-                                                                            "text": "="
+                                                                            "text": "=",
+                                                                            "token": "ASSIGN"
                                                                           },
                                                                           {
                                                                             "type": "variableInitializer",
@@ -1009,7 +1050,8 @@
                                                                                                                                                         "children": [
                                                                                                                                                           {
                                                                                                                                                             "type": "Terminal",
-                                                                                                                                                            "text": "new"
+                                                                                                                                                            "text": "new",
+                                                                                                                                                            "token": "NEW"
                                                                                                                                                           },
                                                                                                                                                           {
                                                                                                                                                             "type": "primitiveType",
@@ -1025,7 +1067,8 @@
                                                                                                                                                                     "children": [
                                                                                                                                                                       {
                                                                                                                                                                         "type": "Terminal",
-                                                                                                                                                                        "text": "double"
+                                                                                                                                                                        "text": "double",
+                                                                                                                                                                        "token": "DOUBLE"
                                                                                                                                                                       }
                                                                                                                                                                     ]
                                                                                                                                                                   }
@@ -1043,7 +1086,8 @@
                                                                                                                                                                 "children": [
                                                                                                                                                                   {
                                                                                                                                                                     "type": "Terminal",
-                                                                                                                                                                    "text": "["
+                                                                                                                                                                    "text": "[",
+                                                                                                                                                                    "token": "LBRACK"
                                                                                                                                                                   },
                                                                                                                                                                   {
                                                                                                                                                                     "type": "expression",
@@ -1123,7 +1167,8 @@
                                                                                                                                                                                                                                             "children": [
                                                                                                                                                                                                                                               {
                                                                                                                                                                                                                                                 "type": "Terminal",
-                                                                                                                                                                                                                                                "text": "4"
+                                                                                                                                                                                                                                                "text": "4",
+                                                                                                                                                                                                                                                "token": "IntegerLiteral"
                                                                                                                                                                                                                                               }
                                                                                                                                                                                                                                             ]
                                                                                                                                                                                                                                           }
@@ -1165,7 +1210,8 @@
                                                                                                                                                                   },
                                                                                                                                                                   {
                                                                                                                                                                     "type": "Terminal",
-                                                                                                                                                                    "text": "]"
+                                                                                                                                                                    "text": "]",
+                                                                                                                                                                    "token": "RBRACK"
                                                                                                                                                                   }
                                                                                                                                                                 ]
                                                                                                                                                               },
@@ -1175,7 +1221,8 @@
                                                                                                                                                                 "children": [
                                                                                                                                                                   {
                                                                                                                                                                     "type": "Terminal",
-                                                                                                                                                                    "text": "["
+                                                                                                                                                                    "text": "[",
+                                                                                                                                                                    "token": "LBRACK"
                                                                                                                                                                   },
                                                                                                                                                                   {
                                                                                                                                                                     "type": "expression",
@@ -1255,7 +1302,8 @@
                                                                                                                                                                                                                                             "children": [
                                                                                                                                                                                                                                               {
                                                                                                                                                                                                                                                 "type": "Terminal",
-                                                                                                                                                                                                                                                "text": "4"
+                                                                                                                                                                                                                                                "text": "4",
+                                                                                                                                                                                                                                                "token": "IntegerLiteral"
                                                                                                                                                                                                                                               }
                                                                                                                                                                                                                                             ]
                                                                                                                                                                                                                                           }
@@ -1297,7 +1345,8 @@
                                                                                                                                                                   },
                                                                                                                                                                   {
                                                                                                                                                                     "type": "Terminal",
-                                                                                                                                                                    "text": "]"
+                                                                                                                                                                    "text": "]",
+                                                                                                                                                                    "token": "RBRACK"
                                                                                                                                                                   }
                                                                                                                                                                 ]
                                                                                                                                                               }
@@ -1351,7 +1400,8 @@
                                                               },
                                                               {
                                                                 "type": "Terminal",
-                                                                "text": ";"
+                                                                "text": ";",
+                                                                "token": "SEMI"
                                                               }
                                                             ]
                                                           }
@@ -1378,11 +1428,13 @@
                                                                       "children": [
                                                                         {
                                                                           "type": "Terminal",
-                                                                          "text": "for"
+                                                                          "text": "for",
+                                                                          "token": "FOR"
                                                                         },
                                                                         {
                                                                           "type": "Terminal",
-                                                                          "text": "("
+                                                                          "text": "(",
+                                                                          "token": "LPAREN"
                                                                         },
                                                                         {
                                                                           "type": "forInit",
@@ -1414,7 +1466,8 @@
                                                                                                   "children": [
                                                                                                     {
                                                                                                       "type": "Terminal",
-                                                                                                      "text": "int"
+                                                                                                      "text": "int",
+                                                                                                      "token": "INT"
                                                                                                     }
                                                                                                   ]
                                                                                                 }
@@ -1444,7 +1497,8 @@
                                                                                               "children": [
                                                                                                 {
                                                                                                   "type": "Terminal",
-                                                                                                  "text": "i"
+                                                                                                  "text": "i",
+                                                                                                  "token": "Identifier"
                                                                                                 }
                                                                                               ]
                                                                                             }
@@ -1452,7 +1506,8 @@
                                                                                         },
                                                                                         {
                                                                                           "type": "Terminal",
-                                                                                          "text": "="
+                                                                                          "text": "=",
+                                                                                          "token": "ASSIGN"
                                                                                         },
                                                                                         {
                                                                                           "type": "variableInitializer",
@@ -1536,7 +1591,8 @@
                                                                                                                                                                       "children": [
                                                                                                                                                                         {
                                                                                                                                                                           "type": "Terminal",
-                                                                                                                                                                          "text": "0"
+                                                                                                                                                                          "text": "0",
+                                                                                                                                                                          "token": "IntegerLiteral"
                                                                                                                                                                         }
                                                                                                                                                                       ]
                                                                                                                                                                     }
@@ -1588,7 +1644,8 @@
                                                                         },
                                                                         {
                                                                           "type": "Terminal",
-                                                                          "text": ";"
+                                                                          "text": ";",
+                                                                          "token": "SEMI"
                                                                         },
                                                                         {
                                                                           "type": "expression",
@@ -1668,7 +1725,8 @@
                                                                                                                                                   "children": [
                                                                                                                                                     {
                                                                                                                                                       "type": "Terminal",
-                                                                                                                                                      "text": "i"
+                                                                                                                                                      "text": "i",
+                                                                                                                                                      "token": "Identifier"
                                                                                                                                                     }
                                                                                                                                                   ]
                                                                                                                                                 }
@@ -1690,7 +1748,8 @@
                                                                                                                 },
                                                                                                                 {
                                                                                                                   "type": "Terminal",
-                                                                                                                  "text": "<"
+                                                                                                                  "text": "<",
+                                                                                                                  "token": "LT"
                                                                                                                 },
                                                                                                                 {
                                                                                                                   "type": "shiftExpression",
@@ -1730,7 +1789,8 @@
                                                                                                                                                   "children": [
                                                                                                                                                     {
                                                                                                                                                       "type": "Terminal",
-                                                                                                                                                      "text": "4"
+                                                                                                                                                      "text": "4",
+                                                                                                                                                      "token": "IntegerLiteral"
                                                                                                                                                     }
                                                                                                                                                   ]
                                                                                                                                                 }
@@ -1772,7 +1832,8 @@
                                                                         },
                                                                         {
                                                                           "type": "Terminal",
-                                                                          "text": ";"
+                                                                          "text": ";",
+                                                                          "token": "SEMI"
                                                                         },
                                                                         {
                                                                           "type": "forUpdate",
@@ -1804,7 +1865,8 @@
                                                                                                   "children": [
                                                                                                     {
                                                                                                       "type": "Terminal",
-                                                                                                      "text": "i"
+                                                                                                      "text": "i",
+                                                                                                      "token": "Identifier"
                                                                                                     }
                                                                                                   ]
                                                                                                 }
@@ -1814,7 +1876,8 @@
                                                                                         },
                                                                                         {
                                                                                           "type": "Terminal",
-                                                                                          "text": "++"
+                                                                                          "text": "++",
+                                                                                          "token": "INC"
                                                                                         }
                                                                                       ]
                                                                                     }
@@ -1826,7 +1889,8 @@
                                                                         },
                                                                         {
                                                                           "type": "Terminal",
-                                                                          "text": ")"
+                                                                          "text": ")",
+                                                                          "token": "RPAREN"
                                                                         },
                                                                         {
                                                                           "type": "Statement",
@@ -1845,11 +1909,13 @@
                                                                                     "children": [
                                                                                       {
                                                                                         "type": "Terminal",
-                                                                                        "text": "for"
+                                                                                        "text": "for",
+                                                                                        "token": "FOR"
                                                                                       },
                                                                                       {
                                                                                         "type": "Terminal",
-                                                                                        "text": "("
+                                                                                        "text": "(",
+                                                                                        "token": "LPAREN"
                                                                                       },
                                                                                       {
                                                                                         "type": "forInit",
@@ -1881,7 +1947,8 @@
                                                                                                                 "children": [
                                                                                                                   {
                                                                                                                     "type": "Terminal",
-                                                                                                                    "text": "int"
+                                                                                                                    "text": "int",
+                                                                                                                    "token": "INT"
                                                                                                                   }
                                                                                                                 ]
                                                                                                               }
@@ -1911,7 +1978,8 @@
                                                                                                             "children": [
                                                                                                               {
                                                                                                                 "type": "Terminal",
-                                                                                                                "text": "j"
+                                                                                                                "text": "j",
+                                                                                                                "token": "Identifier"
                                                                                                               }
                                                                                                             ]
                                                                                                           }
@@ -1919,7 +1987,8 @@
                                                                                                       },
                                                                                                       {
                                                                                                         "type": "Terminal",
-                                                                                                        "text": "="
+                                                                                                        "text": "=",
+                                                                                                        "token": "ASSIGN"
                                                                                                       },
                                                                                                       {
                                                                                                         "type": "variableInitializer",
@@ -2003,7 +2072,8 @@
                                                                                                                                                                                     "children": [
                                                                                                                                                                                       {
                                                                                                                                                                                         "type": "Terminal",
-                                                                                                                                                                                        "text": "0"
+                                                                                                                                                                                        "text": "0",
+                                                                                                                                                                                        "token": "IntegerLiteral"
                                                                                                                                                                                       }
                                                                                                                                                                                     ]
                                                                                                                                                                                   }
@@ -2055,7 +2125,8 @@
                                                                                       },
                                                                                       {
                                                                                         "type": "Terminal",
-                                                                                        "text": ";"
+                                                                                        "text": ";",
+                                                                                        "token": "SEMI"
                                                                                       },
                                                                                       {
                                                                                         "type": "expression",
@@ -2135,7 +2206,8 @@
                                                                                                                                                                 "children": [
                                                                                                                                                                   {
                                                                                                                                                                     "type": "Terminal",
-                                                                                                                                                                    "text": "j"
+                                                                                                                                                                    "text": "j",
+                                                                                                                                                                    "token": "Identifier"
                                                                                                                                                                   }
                                                                                                                                                                 ]
                                                                                                                                                               }
@@ -2157,7 +2229,8 @@
                                                                                                                               },
                                                                                                                               {
                                                                                                                                 "type": "Terminal",
-                                                                                                                                "text": "<"
+                                                                                                                                "text": "<",
+                                                                                                                                "token": "LT"
                                                                                                                               },
                                                                                                                               {
                                                                                                                                 "type": "shiftExpression",
@@ -2197,7 +2270,8 @@
                                                                                                                                                                 "children": [
                                                                                                                                                                   {
                                                                                                                                                                     "type": "Terminal",
-                                                                                                                                                                    "text": "4"
+                                                                                                                                                                    "text": "4",
+                                                                                                                                                                    "token": "IntegerLiteral"
                                                                                                                                                                   }
                                                                                                                                                                 ]
                                                                                                                                                               }
@@ -2239,7 +2313,8 @@
                                                                                       },
                                                                                       {
                                                                                         "type": "Terminal",
-                                                                                        "text": ";"
+                                                                                        "text": ";",
+                                                                                        "token": "SEMI"
                                                                                       },
                                                                                       {
                                                                                         "type": "forUpdate",
@@ -2271,7 +2346,8 @@
                                                                                                                 "children": [
                                                                                                                   {
                                                                                                                     "type": "Terminal",
-                                                                                                                    "text": "j"
+                                                                                                                    "text": "j",
+                                                                                                                    "token": "Identifier"
                                                                                                                   }
                                                                                                                 ]
                                                                                                               }
@@ -2281,7 +2357,8 @@
                                                                                                       },
                                                                                                       {
                                                                                                         "type": "Terminal",
-                                                                                                        "text": "++"
+                                                                                                        "text": "++",
+                                                                                                        "token": "INC"
                                                                                                       }
                                                                                                     ]
                                                                                                   }
@@ -2293,7 +2370,8 @@
                                                                                       },
                                                                                       {
                                                                                         "type": "Terminal",
-                                                                                        "text": ")"
+                                                                                        "text": ")",
+                                                                                        "token": "RPAREN"
                                                                                       },
                                                                                       {
                                                                                         "type": "Statement",
@@ -2340,7 +2418,8 @@
                                                                                                                               "children": [
                                                                                                                                 {
                                                                                                                                   "type": "Terminal",
-                                                                                                                                  "text": "m"
+                                                                                                                                  "text": "m",
+                                                                                                                                  "token": "Identifier"
                                                                                                                                 }
                                                                                                                               ]
                                                                                                                             }
@@ -2348,7 +2427,8 @@
                                                                                                                         },
                                                                                                                         {
                                                                                                                           "type": "Terminal",
-                                                                                                                          "text": "["
+                                                                                                                          "text": "[",
+                                                                                                                          "token": "LBRACK"
                                                                                                                         },
                                                                                                                         {
                                                                                                                           "type": "expression",
@@ -2424,7 +2504,8 @@
                                                                                                                                                                                               "children": [
                                                                                                                                                                                                 {
                                                                                                                                                                                                   "type": "Terminal",
-                                                                                                                                                                                                  "text": "i"
+                                                                                                                                                                                                  "text": "i",
+                                                                                                                                                                                                  "token": "Identifier"
                                                                                                                                                                                                 }
                                                                                                                                                                                               ]
                                                                                                                                                                                             }
@@ -2464,13 +2545,15 @@
                                                                                                                         },
                                                                                                                         {
                                                                                                                           "type": "Terminal",
-                                                                                                                          "text": "]"
+                                                                                                                          "text": "]",
+                                                                                                                          "token": "RBRACK"
                                                                                                                         }
                                                                                                                       ]
                                                                                                                     },
                                                                                                                     {
                                                                                                                       "type": "Terminal",
-                                                                                                                      "text": "["
+                                                                                                                      "text": "[",
+                                                                                                                      "token": "LBRACK"
                                                                                                                     },
                                                                                                                     {
                                                                                                                       "type": "expression",
@@ -2546,7 +2629,8 @@
                                                                                                                                                                                           "children": [
                                                                                                                                                                                             {
                                                                                                                                                                                               "type": "Terminal",
-                                                                                                                                                                                              "text": "j"
+                                                                                                                                                                                              "text": "j",
+                                                                                                                                                                                              "token": "Identifier"
                                                                                                                                                                                             }
                                                                                                                                                                                           ]
                                                                                                                                                                                         }
@@ -2586,7 +2670,8 @@
                                                                                                                     },
                                                                                                                     {
                                                                                                                       "type": "Terminal",
-                                                                                                                      "text": "]"
+                                                                                                                      "text": "]",
+                                                                                                                      "token": "RBRACK"
                                                                                                                     }
                                                                                                                   ]
                                                                                                                 }
@@ -2598,7 +2683,8 @@
                                                                                                               "children": [
                                                                                                                 {
                                                                                                                   "type": "Terminal",
-                                                                                                                  "text": "="
+                                                                                                                  "text": "=",
+                                                                                                                  "token": "ASSIGN"
                                                                                                                 }
                                                                                                               ]
                                                                                                             },
@@ -2688,7 +2774,8 @@
                                                                                                                                                                                               "children": [
                                                                                                                                                                                                 {
                                                                                                                                                                                                   "type": "Terminal",
-                                                                                                                                                                                                  "text": "input"
+                                                                                                                                                                                                  "text": "input",
+                                                                                                                                                                                                  "token": "Identifier"
                                                                                                                                                                                                 }
                                                                                                                                                                                               ]
                                                                                                                                                                                             }
@@ -2698,7 +2785,8 @@
                                                                                                                                                                                     },
                                                                                                                                                                                     {
                                                                                                                                                                                       "type": "Terminal",
-                                                                                                                                                                                      "text": "."
+                                                                                                                                                                                      "text": ".",
+                                                                                                                                                                                      "token": "DOT"
                                                                                                                                                                                     },
                                                                                                                                                                                     {
                                                                                                                                                                                       "type": "identifier",
@@ -2706,17 +2794,20 @@
                                                                                                                                                                                       "children": [
                                                                                                                                                                                         {
                                                                                                                                                                                           "type": "Terminal",
-                                                                                                                                                                                          "text": "nextDouble"
+                                                                                                                                                                                          "text": "nextDouble",
+                                                                                                                                                                                          "token": "Identifier"
                                                                                                                                                                                         }
                                                                                                                                                                                       ]
                                                                                                                                                                                     },
                                                                                                                                                                                     {
                                                                                                                                                                                       "type": "Terminal",
-                                                                                                                                                                                      "text": "("
+                                                                                                                                                                                      "text": "(",
+                                                                                                                                                                                      "token": "LPAREN"
                                                                                                                                                                                     },
                                                                                                                                                                                     {
                                                                                                                                                                                       "type": "Terminal",
-                                                                                                                                                                                      "text": ")"
+                                                                                                                                                                                      "text": ")",
+                                                                                                                                                                                      "token": "RPAREN"
                                                                                                                                                                                     }
                                                                                                                                                                                   ]
                                                                                                                                                                                 }
@@ -2760,7 +2851,8 @@
                                                                                                     },
                                                                                                     {
                                                                                                       "type": "Terminal",
-                                                                                                      "text": ";"
+                                                                                                      "text": ";",
+                                                                                                      "token": "SEMI"
                                                                                                     }
                                                                                                   ]
                                                                                                 }
@@ -2826,13 +2918,15 @@
                                                                                           "children": [
                                                                                             {
                                                                                               "type": "Terminal",
-                                                                                              "text": "System"
+                                                                                              "text": "System",
+                                                                                              "token": "Identifier"
                                                                                             }
                                                                                           ]
                                                                                         },
                                                                                         {
                                                                                           "type": "Terminal",
-                                                                                          "text": "."
+                                                                                          "text": ".",
+                                                                                          "token": "DOT"
                                                                                         },
                                                                                         {
                                                                                           "type": "packageName",
@@ -2844,7 +2938,8 @@
                                                                                               "children": [
                                                                                                 {
                                                                                                   "type": "Terminal",
-                                                                                                  "text": "out"
+                                                                                                  "text": "out",
+                                                                                                  "token": "Identifier"
                                                                                                 }
                                                                                               ]
                                                                                             }
@@ -2856,7 +2951,8 @@
                                                                                 },
                                                                                 {
                                                                                   "type": "Terminal",
-                                                                                  "text": "."
+                                                                                  "text": ".",
+                                                                                  "token": "DOT"
                                                                                 },
                                                                                 {
                                                                                   "type": "identifier",
@@ -2864,13 +2960,15 @@
                                                                                   "children": [
                                                                                     {
                                                                                       "type": "Terminal",
-                                                                                      "text": "print"
+                                                                                      "text": "print",
+                                                                                      "token": "Identifier"
                                                                                     }
                                                                                   ]
                                                                                 },
                                                                                 {
                                                                                   "type": "Terminal",
-                                                                                  "text": "("
+                                                                                  "text": "(",
+                                                                                  "token": "LPAREN"
                                                                                 },
                                                                                 {
                                                                                   "type": "argumentList",
@@ -2958,7 +3056,8 @@
                                                                                                                                                                   "children": [
                                                                                                                                                                     {
                                                                                                                                                                       "type": "Terminal",
-                                                                                                                                                                      "text": "\"Sum of the elements in the major diagonal is \""
+                                                                                                                                                                      "text": "\"Sum of the elements in the major diagonal is \"",
+                                                                                                                                                                      "token": "StringLiteral"
                                                                                                                                                                     }
                                                                                                                                                                   ]
                                                                                                                                                                 }
@@ -2978,7 +3077,8 @@
                                                                                                                                     },
                                                                                                                                     {
                                                                                                                                       "type": "Terminal",
-                                                                                                                                      "text": "+"
+                                                                                                                                      "text": "+",
+                                                                                                                                      "token": "ADD"
                                                                                                                                     },
                                                                                                                                     {
                                                                                                                                       "type": "multiplicativeExpression",
@@ -3014,7 +3114,8 @@
                                                                                                                                                                   "children": [
                                                                                                                                                                     {
                                                                                                                                                                       "type": "Terminal",
-                                                                                                                                                                      "text": "sumMajorDiagonal"
+                                                                                                                                                                      "text": "sumMajorDiagonal",
+                                                                                                                                                                      "token": "Identifier"
                                                                                                                                                                     }
                                                                                                                                                                   ]
                                                                                                                                                                 }
@@ -3022,7 +3123,8 @@
                                                                                                                                                             },
                                                                                                                                                             {
                                                                                                                                                               "type": "Terminal",
-                                                                                                                                                              "text": "("
+                                                                                                                                                              "text": "(",
+                                                                                                                                                              "token": "LPAREN"
                                                                                                                                                             },
                                                                                                                                                             {
                                                                                                                                                               "type": "argumentList",
@@ -3102,7 +3204,8 @@
                                                                                                                                                                                                                                       "children": [
                                                                                                                                                                                                                                         {
                                                                                                                                                                                                                                           "type": "Terminal",
-                                                                                                                                                                                                                                          "text": "m"
+                                                                                                                                                                                                                                          "text": "m",
+                                                                                                                                                                                                                                          "token": "Identifier"
                                                                                                                                                                                                                                         }
                                                                                                                                                                                                                                       ]
                                                                                                                                                                                                                                     }
@@ -3144,7 +3247,8 @@
                                                                                                                                                             },
                                                                                                                                                             {
                                                                                                                                                               "type": "Terminal",
-                                                                                                                                                              "text": ")"
+                                                                                                                                                              "text": ")",
+                                                                                                                                                              "token": "RPAREN"
                                                                                                                                                             }
                                                                                                                                                           ]
                                                                                                                                                         }
@@ -3186,7 +3290,8 @@
                                                                                 },
                                                                                 {
                                                                                   "type": "Terminal",
-                                                                                  "text": ")"
+                                                                                  "text": ")",
+                                                                                  "token": "RPAREN"
                                                                                 }
                                                                               ]
                                                                             }
@@ -3194,7 +3299,8 @@
                                                                         },
                                                                         {
                                                                           "type": "Terminal",
-                                                                          "text": ";"
+                                                                          "text": ";",
+                                                                          "token": "SEMI"
                                                                         }
                                                                       ]
                                                                     }
@@ -3209,7 +3315,8 @@
                                                   },
                                                   {
                                                     "type": "Terminal",
-                                                    "text": "}"
+                                                    "text": "}",
+                                                    "token": "RBRACE"
                                                   }
                                                 ]
                                               }
@@ -3244,7 +3351,8 @@
                                             "children": [
                                               {
                                                 "type": "Terminal",
-                                                "text": "public"
+                                                "text": "public",
+                                                "token": "PUBLIC"
                                               }
                                             ]
                                           },
@@ -3254,7 +3362,8 @@
                                             "children": [
                                               {
                                                 "type": "Terminal",
-                                                "text": "static"
+                                                "text": "static",
+                                                "token": "STATIC"
                                               }
                                             ]
                                           },
@@ -3284,7 +3393,8 @@
                                                                 "children": [
                                                                   {
                                                                     "type": "Terminal",
-                                                                    "text": "double"
+                                                                    "text": "double",
+                                                                    "token": "DOUBLE"
                                                                   }
                                                                 ]
                                                               }
@@ -3306,13 +3416,15 @@
                                                     "children": [
                                                       {
                                                         "type": "Terminal",
-                                                        "text": "sumMajorDiagonal"
+                                                        "text": "sumMajorDiagonal",
+                                                        "token": "Identifier"
                                                       }
                                                     ]
                                                   },
                                                   {
                                                     "type": "Terminal",
-                                                    "text": "("
+                                                    "text": "(",
+                                                    "token": "LPAREN"
                                                   },
                                                   {
                                                     "type": "formalParameterList",
@@ -3348,7 +3460,8 @@
                                                                                 "children": [
                                                                                   {
                                                                                     "type": "Terminal",
-                                                                                    "text": "double"
+                                                                                    "text": "double",
+                                                                                    "token": "DOUBLE"
                                                                                   }
                                                                                 ]
                                                                               }
@@ -3362,19 +3475,23 @@
                                                                         "children": [
                                                                           {
                                                                             "type": "Terminal",
-                                                                            "text": "["
+                                                                            "text": "[",
+                                                                            "token": "LBRACK"
                                                                           },
                                                                           {
                                                                             "type": "Terminal",
-                                                                            "text": "]"
+                                                                            "text": "]",
+                                                                            "token": "RBRACK"
                                                                           },
                                                                           {
                                                                             "type": "Terminal",
-                                                                            "text": "["
+                                                                            "text": "[",
+                                                                            "token": "LBRACK"
                                                                           },
                                                                           {
                                                                             "type": "Terminal",
-                                                                            "text": "]"
+                                                                            "text": "]",
+                                                                            "token": "RBRACK"
                                                                           }
                                                                         ]
                                                                       }
@@ -3394,7 +3511,8 @@
                                                                 "children": [
                                                                   {
                                                                     "type": "Terminal",
-                                                                    "text": "m"
+                                                                    "text": "m",
+                                                                    "token": "Identifier"
                                                                   }
                                                                 ]
                                                               }
@@ -3406,7 +3524,8 @@
                                                   },
                                                   {
                                                     "type": "Terminal",
-                                                    "text": ")"
+                                                    "text": ")",
+                                                    "token": "RPAREN"
                                                   }
                                                 ]
                                               }
@@ -3422,7 +3541,8 @@
                                                 "children": [
                                                   {
                                                     "type": "Terminal",
-                                                    "text": "{"
+                                                    "text": "{",
+                                                    "token": "LBRACE"
                                                   },
                                                   {
                                                     "type": "blockStatements",
@@ -3462,7 +3582,8 @@
                                                                                     "children": [
                                                                                       {
                                                                                         "type": "Terminal",
-                                                                                        "text": "double"
+                                                                                        "text": "double",
+                                                                                        "token": "DOUBLE"
                                                                                       }
                                                                                     ]
                                                                                   }
@@ -3492,7 +3613,8 @@
                                                                                 "children": [
                                                                                   {
                                                                                     "type": "Terminal",
-                                                                                    "text": "sum"
+                                                                                    "text": "sum",
+                                                                                    "token": "Identifier"
                                                                                   }
                                                                                 ]
                                                                               }
@@ -3500,7 +3622,8 @@
                                                                           },
                                                                           {
                                                                             "type": "Terminal",
-                                                                            "text": "="
+                                                                            "text": "=",
+                                                                            "token": "ASSIGN"
                                                                           },
                                                                           {
                                                                             "type": "variableInitializer",
@@ -3584,7 +3707,8 @@
                                                                                                                                                         "children": [
                                                                                                                                                           {
                                                                                                                                                             "type": "Terminal",
-                                                                                                                                                            "text": "0"
+                                                                                                                                                            "text": "0",
+                                                                                                                                                            "token": "IntegerLiteral"
                                                                                                                                                           }
                                                                                                                                                         ]
                                                                                                                                                       }
@@ -3634,7 +3758,8 @@
                                                               },
                                                               {
                                                                 "type": "Terminal",
-                                                                "text": ";"
+                                                                "text": ";",
+                                                                "token": "SEMI"
                                                               }
                                                             ]
                                                           }
@@ -3661,11 +3786,13 @@
                                                                       "children": [
                                                                         {
                                                                           "type": "Terminal",
-                                                                          "text": "for"
+                                                                          "text": "for",
+                                                                          "token": "FOR"
                                                                         },
                                                                         {
                                                                           "type": "Terminal",
-                                                                          "text": "("
+                                                                          "text": "(",
+                                                                          "token": "LPAREN"
                                                                         },
                                                                         {
                                                                           "type": "forInit",
@@ -3697,7 +3824,8 @@
                                                                                                   "children": [
                                                                                                     {
                                                                                                       "type": "Terminal",
-                                                                                                      "text": "int"
+                                                                                                      "text": "int",
+                                                                                                      "token": "INT"
                                                                                                     }
                                                                                                   ]
                                                                                                 }
@@ -3727,7 +3855,8 @@
                                                                                               "children": [
                                                                                                 {
                                                                                                   "type": "Terminal",
-                                                                                                  "text": "i"
+                                                                                                  "text": "i",
+                                                                                                  "token": "Identifier"
                                                                                                 }
                                                                                               ]
                                                                                             }
@@ -3735,7 +3864,8 @@
                                                                                         },
                                                                                         {
                                                                                           "type": "Terminal",
-                                                                                          "text": "="
+                                                                                          "text": "=",
+                                                                                          "token": "ASSIGN"
                                                                                         },
                                                                                         {
                                                                                           "type": "variableInitializer",
@@ -3819,7 +3949,8 @@
                                                                                                                                                                       "children": [
                                                                                                                                                                         {
                                                                                                                                                                           "type": "Terminal",
-                                                                                                                                                                          "text": "0"
+                                                                                                                                                                          "text": "0",
+                                                                                                                                                                          "token": "IntegerLiteral"
                                                                                                                                                                         }
                                                                                                                                                                       ]
                                                                                                                                                                     }
@@ -3871,7 +4002,8 @@
                                                                         },
                                                                         {
                                                                           "type": "Terminal",
-                                                                          "text": ";"
+                                                                          "text": ";",
+                                                                          "token": "SEMI"
                                                                         },
                                                                         {
                                                                           "type": "expression",
@@ -3951,7 +4083,8 @@
                                                                                                                                                   "children": [
                                                                                                                                                     {
                                                                                                                                                       "type": "Terminal",
-                                                                                                                                                      "text": "i"
+                                                                                                                                                      "text": "i",
+                                                                                                                                                      "token": "Identifier"
                                                                                                                                                     }
                                                                                                                                                   ]
                                                                                                                                                 }
@@ -3973,7 +4106,8 @@
                                                                                                                 },
                                                                                                                 {
                                                                                                                   "type": "Terminal",
-                                                                                                                  "text": "<"
+                                                                                                                  "text": "<",
+                                                                                                                  "token": "LT"
                                                                                                                 },
                                                                                                                 {
                                                                                                                   "type": "shiftExpression",
@@ -4013,7 +4147,8 @@
                                                                                                                                                   "children": [
                                                                                                                                                     {
                                                                                                                                                       "type": "Terminal",
-                                                                                                                                                      "text": "m"
+                                                                                                                                                      "text": "m",
+                                                                                                                                                      "token": "Identifier"
                                                                                                                                                     }
                                                                                                                                                   ]
                                                                                                                                                 }
@@ -4021,7 +4156,8 @@
                                                                                                                                             },
                                                                                                                                             {
                                                                                                                                               "type": "Terminal",
-                                                                                                                                              "text": "."
+                                                                                                                                              "text": ".",
+                                                                                                                                              "token": "DOT"
                                                                                                                                             },
                                                                                                                                             {
                                                                                                                                               "type": "identifier",
@@ -4029,7 +4165,8 @@
                                                                                                                                               "children": [
                                                                                                                                                 {
                                                                                                                                                   "type": "Terminal",
-                                                                                                                                                  "text": "length"
+                                                                                                                                                  "text": "length",
+                                                                                                                                                  "token": "Identifier"
                                                                                                                                                 }
                                                                                                                                               ]
                                                                                                                                             }
@@ -4069,7 +4206,8 @@
                                                                         },
                                                                         {
                                                                           "type": "Terminal",
-                                                                          "text": ";"
+                                                                          "text": ";",
+                                                                          "token": "SEMI"
                                                                         },
                                                                         {
                                                                           "type": "forUpdate",
@@ -4101,7 +4239,8 @@
                                                                                                   "children": [
                                                                                                     {
                                                                                                       "type": "Terminal",
-                                                                                                      "text": "i"
+                                                                                                      "text": "i",
+                                                                                                      "token": "Identifier"
                                                                                                     }
                                                                                                   ]
                                                                                                 }
@@ -4111,7 +4250,8 @@
                                                                                         },
                                                                                         {
                                                                                           "type": "Terminal",
-                                                                                          "text": "++"
+                                                                                          "text": "++",
+                                                                                          "token": "INC"
                                                                                         }
                                                                                       ]
                                                                                     }
@@ -4123,7 +4263,8 @@
                                                                         },
                                                                         {
                                                                           "type": "Terminal",
-                                                                          "text": ")"
+                                                                          "text": ")",
+                                                                          "token": "RPAREN"
                                                                         },
                                                                         {
                                                                           "type": "Statement",
@@ -4162,7 +4303,8 @@
                                                                                                         "children": [
                                                                                                           {
                                                                                                             "type": "Terminal",
-                                                                                                            "text": "sum"
+                                                                                                            "text": "sum",
+                                                                                                            "token": "Identifier"
                                                                                                           }
                                                                                                         ]
                                                                                                       }
@@ -4176,7 +4318,8 @@
                                                                                                 "children": [
                                                                                                   {
                                                                                                     "type": "Terminal",
-                                                                                                    "text": "+="
+                                                                                                    "text": "+=",
+                                                                                                    "token": "ADD_ASSIGN"
                                                                                                   }
                                                                                                 ]
                                                                                               },
@@ -4262,7 +4405,8 @@
                                                                                                                                                                             "children": [
                                                                                                                                                                               {
                                                                                                                                                                                 "type": "Terminal",
-                                                                                                                                                                                "text": "m"
+                                                                                                                                                                                "text": "m",
+                                                                                                                                                                                "token": "Identifier"
                                                                                                                                                                               }
                                                                                                                                                                             ]
                                                                                                                                                                           }
@@ -4270,7 +4414,8 @@
                                                                                                                                                                       },
                                                                                                                                                                       {
                                                                                                                                                                         "type": "Terminal",
-                                                                                                                                                                        "text": "["
+                                                                                                                                                                        "text": "[",
+                                                                                                                                                                        "token": "LBRACK"
                                                                                                                                                                       },
                                                                                                                                                                       {
                                                                                                                                                                         "type": "expression",
@@ -4346,7 +4491,8 @@
                                                                                                                                                                                                                                             "children": [
                                                                                                                                                                                                                                               {
                                                                                                                                                                                                                                                 "type": "Terminal",
-                                                                                                                                                                                                                                                "text": "i"
+                                                                                                                                                                                                                                                "text": "i",
+                                                                                                                                                                                                                                                "token": "Identifier"
                                                                                                                                                                                                                                               }
                                                                                                                                                                                                                                             ]
                                                                                                                                                                                                                                           }
@@ -4386,7 +4532,8 @@
                                                                                                                                                                       },
                                                                                                                                                                       {
                                                                                                                                                                         "type": "Terminal",
-                                                                                                                                                                        "text": "]"
+                                                                                                                                                                        "text": "]",
+                                                                                                                                                                        "token": "RBRACK"
                                                                                                                                                                       },
                                                                                                                                                                       {
                                                                                                                                                                         "type": "pNNA",
@@ -4394,7 +4541,8 @@
                                                                                                                                                                         "children": [
                                                                                                                                                                           {
                                                                                                                                                                             "type": "Terminal",
-                                                                                                                                                                            "text": "["
+                                                                                                                                                                            "text": "[",
+                                                                                                                                                                            "token": "LBRACK"
                                                                                                                                                                           },
                                                                                                                                                                           {
                                                                                                                                                                             "type": "expression",
@@ -4470,7 +4618,8 @@
                                                                                                                                                                                                                                                 "children": [
                                                                                                                                                                                                                                                   {
                                                                                                                                                                                                                                                     "type": "Terminal",
-                                                                                                                                                                                                                                                    "text": "i"
+                                                                                                                                                                                                                                                    "text": "i",
+                                                                                                                                                                                                                                                    "token": "Identifier"
                                                                                                                                                                                                                                                   }
                                                                                                                                                                                                                                                 ]
                                                                                                                                                                                                                                               }
@@ -4510,7 +4659,8 @@
                                                                                                                                                                           },
                                                                                                                                                                           {
                                                                                                                                                                             "type": "Terminal",
-                                                                                                                                                                            "text": "]"
+                                                                                                                                                                            "text": "]",
+                                                                                                                                                                            "token": "RBRACK"
                                                                                                                                                                           }
                                                                                                                                                                         ]
                                                                                                                                                                       }
@@ -4556,7 +4706,8 @@
                                                                                       },
                                                                                       {
                                                                                         "type": "Terminal",
-                                                                                        "text": ";"
+                                                                                        "text": ";",
+                                                                                        "token": "SEMI"
                                                                                       }
                                                                                     ]
                                                                                   }
@@ -4595,7 +4746,8 @@
                                                                       "children": [
                                                                         {
                                                                           "type": "Terminal",
-                                                                          "text": "return"
+                                                                          "text": "return",
+                                                                          "token": "RETURN"
                                                                         },
                                                                         {
                                                                           "type": "expression",
@@ -4671,7 +4823,8 @@
                                                                                                                                               "children": [
                                                                                                                                                 {
                                                                                                                                                   "type": "Terminal",
-                                                                                                                                                  "text": "sum"
+                                                                                                                                                  "text": "sum",
+                                                                                                                                                  "token": "Identifier"
                                                                                                                                                 }
                                                                                                                                               ]
                                                                                                                                             }
@@ -4711,7 +4864,8 @@
                                                                         },
                                                                         {
                                                                           "type": "Terminal",
-                                                                          "text": ";"
+                                                                          "text": ";",
+                                                                          "token": "SEMI"
                                                                         }
                                                                       ]
                                                                     }
@@ -4726,7 +4880,8 @@
                                                   },
                                                   {
                                                     "type": "Terminal",
-                                                    "text": "}"
+                                                    "text": "}",
+                                                    "token": "RBRACE"
                                                   }
                                                 ]
                                               }
@@ -4741,7 +4896,8 @@
                             },
                             {
                               "type": "Terminal",
-                              "text": "}"
+                              "text": "}",
+                              "token": "RBRACE"
                             }
                           ]
                         }
