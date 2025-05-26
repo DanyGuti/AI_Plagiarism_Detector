@@ -1,119 +1,106 @@
 '''
-AST embedding module
-This module contains functions to traverse the AST (Abstract Syntax Tree)
-and extract features from it.
+AST embedding for feature extraction from Matrix encoding.
 '''
-import json
-from typing import Union, List, Optional, TypedDict
-from sklearn.preprocessing import LabelEncoder
-import numpy as np
+import keras
+import tensorflow as tf
 
+# CONSTANTS CAN BE MOVED TO A CONFIG FILE
+# CAN BE TUNED BASED ON THE DATASET
+MAX_LENGTH_NODES= 350
+TYPE_VOCAB_SIZE = 300
+TYPE_EMBEDDING_DIM = 64
+TOKEN_VOCAB_SIZE = 300
+TOKEN_EMBEDDING_DIM = 64
 
-# Define a TypedDict for the AST node
-class ASTNode(TypedDict):
-    '''ASTNode class
-        This class represents a node in the Abstract Syntax Tree (AST).
-        to store the type, text, name, and children of the node.
+def ast_embedding(
+    name_prefix: str,
+) -> keras.Model:
     '''
-    type: str
-    token: str
-    text: Optional[str]
-    name: Optional[str]
-    children: Union[List['ASTNode'], 'ASTNode']
-
-# Process AST nodes, to convert into a matrix embedding
-def traverse_ast(
-    node: ASTNode,
-    depth=0,
-    features=None
-) -> list[dict[str,int|str|bool]]:
-    '''
-    Recursively traverse the AST and extract features.
+    Generate an embedding for the AST of a given file.
     Args:
-        node (dict): The AST node to process.
-        depth (int): The current depth in the AST.
-        features (list): The list to store features.
+        file_path (str): The path to the Java file.
     Returns:
-        list[dict[str,int|str|bool]]: A list of features extracted from the AST.
+        Model: The embedding of the AST.
     '''
-    if features is None:
-        features = []
-    if not isinstance(node, dict):
-        return features
-    node_type = node.get("type", "UNK")
-    token = node.get("token") or node.get("value") or node.get("text") or None
-    children = node.get("children", [])
-
-    # Normalize children to a list
-    if isinstance(children, dict):
-        children = [children]
-    elif not isinstance(children, list):
-        children = []
-
-    # Save the features for the current node
-    # Probably need the feature of tracking the path from the root to the leaf
-    features.append({
-        "type": node_type,
-        "token": token,
-        "depth": depth,
-        "children_count": len(children),
-        "is_leaf": len(children) == 0,
-    })
-
-    for child in children:
-        traverse_ast(child, depth + 1, features)
-    return features
-
-
-def read_ast_from_file(
-    file_path: str
-) -> dict:
-    '''
-    Read the AST from a JSON file.
-    Args:
-        file_path (str): The path to the JSON file.
-        Returns:
-        dict: The AST data.
-    '''
-    with open(file_path, 'r') as f:
-
-        ast_data = json.load(f)
-    return ast_data
-
-def encode_features(
-    features: list[dict[str, int|str|bool]]
-) -> list[dict[str, int]]:
-    '''
-    Encode the features into a matrix.
-    Args:
-        features (list): The list of features to encode.
-    Returns:
-        np.array: The encoded features as a matrix.
-    '''
-    type_encoder = LabelEncoder()
-    token_encoder = LabelEncoder()
-
-    all_types = [feature["type"] for feature in features]
-    all_tokens = [feature["token"] or "ε" for feature in features]
-
-    type_encoder.fit(all_types)
-    token_encoder.fit(all_tokens)
-
-    type_ids = type_encoder.transform(all_types)
-    token_ids = token_encoder.transform(all_tokens)
-
-    # Each node will have 5 features:
-    # 1. Type ID encoded
-    # 2. Token from terminal nodes encoded
-    # 3. Depth
-    # 4. Number of children
-    # 5. Is leaf (1 if leaf, 0 otherwise)
-    matrix = np.zeros((len(features), 5), dtype=int)
-    for i, feature in enumerate(features):
-        matrix[i, 0] = type_ids[i]
-        matrix[i, 1] = token_ids[i]
-        matrix[i, 2] = feature["depth"]
-        matrix[i, 3] = feature["children_count"]
-        matrix[i, 4] = int(feature["is_leaf"])
-
-    return matrix
+    depth: keras.KerasTensor = keras.Input(
+        shape=(MAX_LENGTH_NODES, 1), name=f"{name_prefix}_depth"
+    )
+    children_count: keras.KerasTensor = keras.Input(
+        shape=(MAX_LENGTH_NODES, 1),
+        name=f"{name_prefix}_children_count"
+    )
+    is_leaf: keras.KerasTensor = keras.Input(
+        shape=(MAX_LENGTH_NODES, 1),
+        name=f"{name_prefix}_is_leaf"
+    )
+    type_id: keras.KerasTensor = keras.Input(
+        shape=(MAX_LENGTH_NODES,),
+        name=f"{name_prefix}_type_id"
+    )
+    token_id: keras.KerasTensor = keras.Input(
+        shape=(MAX_LENGTH_NODES,),
+        name=f"{name_prefix}_token_id"
+    )
+    # Embedding for the token and type ids
+    type_embedding: tf.Tensor  = keras.layers.Embedding(
+        input_dim=TYPE_VOCAB_SIZE,
+        output_dim=TYPE_EMBEDDING_DIM,
+        name=f"{name_prefix}_type_embedding"
+    )(type_id)
+    token_embedding: tf.Tensor = keras.layers.Embedding(
+        input_dim=TOKEN_VOCAB_SIZE,
+        output_dim=TOKEN_EMBEDDING_DIM,
+        name=f"{name_prefix}_token_embedding"
+    )(token_id)
+    # Concatenate the embeddings with the other features to create the final embedding
+    # Returning a single tensor dimmension (batch_size, MAX_NODES_LENGTH, 5 + EMBEDDING_DIMS)
+    features: tf.Tensor = keras.layers.Concatenate()([
+        depth,
+        children_count,
+        is_leaf,
+        type_embedding,
+        token_embedding
+    ])
+    # Following the feature extraction from the paper:
+    # Plagiarism Detection in Source Code using Machine Learning.
+    x = keras.layers.Conv1D(
+        filters=32,
+        kernel_size=3,
+        padding="same",
+        kernel_regularizer=keras.regularizers.l2(0.02)
+    )(features)
+    x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.Activation("relu")(x)
+    x = keras.layers.MaxPooling1D(
+        padding="same"
+    )(x)
+    x = keras.layers.Dropout(0.3)(x)
+    x = keras.layers.Conv1D(
+        filters=32,
+        kernel_size=3,
+        padding="same",
+        kernel_regularizer=keras.regularizers.l2(0.02)
+    )(x)
+    x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.Activation("relu")(x)
+    x = keras.layers.MaxPooling1D(
+        padding="same"
+    )(x)
+    x = keras.layers.Dropout(0.3)(x)
+    x = keras.layers.Conv1D(
+        filters=32,
+        kernel_size=3,
+        padding="same",
+        kernel_regularizer=keras.regularizers.l2(0.02)
+    )(x)
+    x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.Activation("relu")(x)
+    x = keras.layers.MaxPooling1D(
+        padding="same"
+    )(x)
+    x = keras.layers.Dropout(0.3)(x)
+    return keras.Model(
+        inputs=[depth, children_count, is_leaf, type_id, token_id],
+        outputs=x,
+        name=f"{name_prefix}_ast_embedding"
+    )

@@ -9,7 +9,7 @@ import random
 import json
 import numpy as np
 from tqdm import tqdm
-from features.ast_embedding import traverse_ast, encode_features, read_ast_from_file
+from features.ast_encoding import traverse_ast, encode_features, read_ast_from_file
 from .parser_utils import parse_java_code
 
 CATEGORIES: list[str] = [
