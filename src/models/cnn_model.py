@@ -71,7 +71,7 @@ def binary_plagiarism_code_prediction(
 ) -> None:
     inputs = embeding_model.inputs
     ast_output = embeding_model.outputs[0]
-    x = keras.layers.GlobalMaxPool1D()(ast_output)
+    x = keras.layers.GlobalAveragePooling1D()(ast_output)
     output = keras.layers.Dense(
         1,
         activation="sigmoid",
@@ -79,7 +79,7 @@ def binary_plagiarism_code_prediction(
     )(x)
     model = keras.Model(inputs=inputs, outputs=output)
     model.compile(
-        optimizer=keras.optimizers.Adam(learning_rate=0.0001),
+        optimizer=keras.optimizers.Adam(learning_rate=0.00001),
         loss='binary_crossentropy',
         metrics=['binary_accuracy', 'accuracy'],
     )

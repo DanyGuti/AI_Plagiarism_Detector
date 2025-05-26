@@ -48,7 +48,7 @@ def load_all_cases(base_path):
         all_samples[key] = keras.preprocessing.sequence.pad_sequences(
             all_samples[key],
             padding='post',
-            maxlen=350
+            maxlen=500
         )
     return all_samples, np.array(all_labels)
 
