@@ -25,13 +25,11 @@ def load_folder_data(
     # Loop through the directory
     # Read the TXT matrices files, extract features by columns
     # and append them to the lists
-    # TODO:
-        # MISSING PADDING THE DATA WITH KERAS.PREPROCESSING.PADSEQUENCES
     full_path: Path = Path(folder_path) / Path(case_folder)
     label = None
     for file in full_path.glob("*.txt"):
         type_ids, token_ids, depth, children_count, is_leaf =\
-            [], [], [], [], [], []
+            [], [], [], [], []
         with file.open("r") as f:
             lines = f.readlines()
         label = 0 if "nonplag" in file.name.lower() else 1
@@ -42,7 +40,6 @@ def load_folder_data(
             depth.append(int(columns[2]))
             children_count.append(int(columns[3]))
             is_leaf.append(int(columns[4]))
-            labels.append(label)
         sample_features = {
             "type_ids": np.array(type_ids),
             "token_ids": np.array(token_ids),
@@ -56,12 +53,13 @@ def load_folder_data(
     return samples, labels
 
 def prepare_model_inputs(features, name_prefix="ast"):
+    print("features['depth'] =", features["depth"], type(features["depth"]))
     inputs = {
-        f"{name_prefix}_depth": features["depth"][..., np.newaxis],
-        f"{name_prefix}_children_count": features["children_count"][..., np.newaxis],
-        f"{name_prefix}_is_leaf": features["is_leaf"][..., np.newaxis],
-        f"{name_prefix}_type_id": features["type_ids"][..., np.newaxis],
-        f"{name_prefix}_token_id": features["token_ids"][..., np.newaxis],
+        f"{name_prefix}_depth": np.array(features["depth"])[..., np.newaxis],
+        f"{name_prefix}_children_count": np.array(features["children_count"])[..., np.newaxis],
+        f"{name_prefix}_is_leaf": np.array(features["is_leaf"])[..., np.newaxis],
+        f"{name_prefix}_type_id": np.array(features["type_ids"])[..., np.newaxis],
+        f"{name_prefix}_token_id": np.array(features["token_ids"])[..., np.newaxis],
     }
     return inputs
 

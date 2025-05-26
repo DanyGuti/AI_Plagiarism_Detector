@@ -7,6 +7,7 @@ Plagiarism Detection in Source Code using Machine Learning.
 '''
 import numpy as np
 import os
+import keras
 from preprocessing.dataset_processor import (
     process_all_files,
     create_dictionary_from_files,
@@ -25,13 +26,31 @@ from features.ast_embedding import (
 CASES: list[str] = [f"case-0{i}" for i in range(1,7)]
 
 def load_all_cases(base_path):
-    all_samples = []
+    all_samples = {
+        "type_ids": [],
+        "token_ids": [],
+        "depth": [],
+        "children_count": [],
+        "is_leaf": [],
+    }
     all_labels = []
+
     for case in CASES:
         case_samples, case_labels = load_folder_data(base_path, case)
-        all_samples.extend(case_samples)
+        for sample in case_samples:
+            # Append each feature array to the corresponding list
+            for key in all_samples:
+                all_samples[key].append(sample[key])
         all_labels.extend(case_labels)
-    return np.array(all_samples), np.array(all_labels)
+
+    # Stack all feature arrays
+    for key in all_samples:
+        all_samples[key] = keras.preprocessing.sequence.pad_sequences(
+            all_samples[key],
+            padding='post',
+            maxlen=350
+        )
+    return all_samples, np.array(all_labels)
 
 if __name__ == "__main__":
     print("Main file")
