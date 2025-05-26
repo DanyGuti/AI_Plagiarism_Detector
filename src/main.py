@@ -25,31 +25,13 @@ from features.ast_embedding import (
 CASES: list[str] = [f"case-0{i}" for i in range(1,7)]
 
 def load_all_cases(base_path):
-    features_dict = {
-        "type_ids": [],
-        "token_ids": [],
-        "depth": [],
-        "children_count": [],
-        "is_leaf": [],
-    }
-    labels = []
+    all_samples = []
+    all_labels = []
     for case in CASES:
-        case_features, case_labels = load_folder_data(
-            base_path,
-            case_folder=case
-        )
-        # Append features for each key
-        for key, val in features_dict.items():
-            features_dict[key].extend(case_features[key])
-
-        labels.extend(case_labels)
-
-    # Convert lists to numpy arrays
-    for key in features_dict.keys():
-        features_dict[key] = np.array(features_dict[key])
-
-    labels = np.array(labels)
-    return features_dict, labels
+        case_samples, case_labels = load_folder_data(base_path, case)
+        all_samples.extend(case_samples)
+        all_labels.extend(case_labels)
+    return np.array(all_samples), np.array(all_labels)
 
 if __name__ == "__main__":
     print("Main file")

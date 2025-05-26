@@ -20,14 +20,18 @@ def load_folder_data(
         np.array: The data and labels.
     '''
     # Load the data from the folder
-    type_ids, token_ids, depth, children_count, is_leaf, labels =\
-        [], [], [], [], [], []
+    samples = []
+    labels = []
     # Loop through the directory
     # Read the TXT matrices files, extract features by columns
     # and append them to the lists
+    # TODO:
+        # MISSING PADDING THE DATA WITH KERAS.PREPROCESSING.PADSEQUENCES
     full_path: Path = Path(folder_path) / Path(case_folder)
     label = None
     for file in full_path.glob("*.txt"):
+        type_ids, token_ids, depth, children_count, is_leaf =\
+            [], [], [], [], [], []
         with file.open("r") as f:
             lines = f.readlines()
         label = 0 if "nonplag" in file.name.lower() else 1
@@ -39,22 +43,17 @@ def load_folder_data(
             children_count.append(int(columns[3]))
             is_leaf.append(int(columns[4]))
             labels.append(label)
-    # Convert the lists to numpy arrays (reshaping them to 2D arrays)
-    type_ids = np.array(type_ids)
-    token_ids = np.array(token_ids)
-    depth = np.array(depth)
-    children_count = np.array(children_count)
-    is_leaf = np.array(is_leaf)
-    features = {
-        "type_ids": type_ids,
-        "token_ids": token_ids,
-        "depth": depth,
-        "children_count": children_count,
-        "is_leaf": is_leaf
-    }
-    labels = np.array(labels)
+        sample_features = {
+            "type_ids": np.array(type_ids),
+            "token_ids": np.array(token_ids),
+            "depth": np.array(depth),
+            "children_count": np.array(children_count),
+            "is_leaf": np.array(is_leaf),
+        }
+        samples.append(sample_features)
+        labels.append(label)
 
-    return features, labels
+    return samples, labels
 
 def prepare_model_inputs(features, name_prefix="ast"):
     inputs = {
