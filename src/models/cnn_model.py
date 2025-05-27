@@ -63,54 +63,73 @@ def prepare_model_inputs(features, name_prefix="ast"):
     }
     return inputs
 
+from tensorflow import keras
+import numpy as np
+
 def binary_plagiarism_code_prediction(
-    embeding_model: keras.Input,
+    embedding_model: keras.Model,
     labels: np.ndarray,
     input_data: dict[str, keras.KerasTensor],
-    val_data: dict[str, keras.KerasTensor],
-) -> None:
-    inputs = embeding_model.inputs
-    ast_output = embeding_model.outputs[0]
+    val_data: tuple[dict[str, keras.KerasTensor], np.ndarray],
+) -> keras.Model:
+    inputs = embedding_model.inputs
+    ast_output = embedding_model.outputs[0]
+    
     x = keras.layers.GlobalAveragePooling1D()(ast_output)
-    output = keras.layers.Dense(
-        1,
-        activation="sigmoid",
-        name="output"
-    )(x)
+    x = keras.layers.Dropout(0.3)(x)  # Regularization
+    x = keras.layers.Dense(64, activation='relu')(x)  # Smaller dense layer
+    x = keras.layers.Dropout(0.3)(x)
+
+    output = keras.layers.Dense(1, activation="sigmoid", name="output")(x)
+
     model = keras.Model(inputs=inputs, outputs=output)
     model.compile(
-        optimizer=keras.optimizers.Adam(learning_rate=0.00001),
+        optimizer=keras.optimizers.Adam(learning_rate=1e-5),
         loss='binary_crossentropy',
-        metrics=['binary_accuracy', 'accuracy'],
+        metrics=['binary_accuracy'],
     )
     model.summary()
-    model.save("ast_cnn_model.keras")
+
+    early_stop = keras.callbacks.EarlyStopping(
+        monitor='val_loss',
+        patience=3,
+        restore_best_weights=True
+    )
 
     history = model.fit(
         x=input_data,
         y=labels,
-        epochs=10,
+        epochs=50,
         validation_data=val_data,
+        callbacks=[early_stop],
+        batch_size=16  # Helps with small data
     )
-    plot_history(
-        history,
-    )
+
+    model.save("ast_cnn_model.keras")
+    plot_history(history)
     return model
 
-def plot_history(
-    history: keras.callbacks.History,
-) -> None:
+
+def plot_history(history: keras.callbacks.History) -> None:
     '''
     Plot the training and validation accuracy and loss.
     Args:
         history (keras.callbacks.History): The training history.
-        save_path (str): The path to save the plot.
     '''
     # Plot training & validation accuracy values
-    plt.plot(history.history['accuracy'], 'b-', label='Train Accuracy')   # blue line
-    plt.plot(history.history['val_accuracy'], 'bo', label='Val Accuracy') # blue circle markers only
+    plt.plot(history.history['binary_accuracy'], 'b-', label='Train Accuracy')   # blue line
+    plt.plot(history.history['val_binary_accuracy'], 'bo', label='Val Accuracy') # blue circle markers
     plt.title('Model accuracy')
     plt.ylabel('Accuracy')
     plt.xlabel('Epoch')
-    plt.legend(['Train', 'Validation'], loc='upper left')
+    plt.legend(loc='upper left')
+    plt.show()
+
+    # Plot training & validation loss values
+    plt.plot(history.history['loss'], 'r-', label='Train Loss')
+    plt.plot(history.history['val_loss'], 'ro', label='Val Loss')
+    plt.title('Model loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend(loc='upper left')
     plt.show()

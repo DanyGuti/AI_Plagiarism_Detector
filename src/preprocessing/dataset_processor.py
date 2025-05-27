@@ -168,9 +168,9 @@ def write_matrix(file_path: str, matrix: np.ndarray):
 def create_data_split_from_dict(
     matrix_dict: Dict[str, Tuple[str, np.ndarray]],
     original_dict: Dict[str, Tuple[str, np.ndarray]],
-    train_split: float = 0.8,
-    val_split: float = 0.1,
-    test_split: float = 0.1,
+    train_split: float = 0.6,
+    val_split: float = 0.2,
+    test_split: float = 0.2,
 ):
     """
     Splits main_dict into train/val/test and writes them to matrix_data/{split}/{case}/.
