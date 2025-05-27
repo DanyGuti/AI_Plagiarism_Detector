@@ -5,15 +5,14 @@ a CNN model for binary plagiarism detection in code.
 Based on research paper:
 Plagiarism Detection in Source Code using Machine Learning.
 '''
-import numpy as np
 import os
+import numpy as np
 import keras
 from preprocessing.dataset_processor import (
     process_all_files,
     create_dictionary_from_files,
     create_data_split_from_dict,
 )
-from collections import Counter
 from models.cnn_model import (
     load_folder_data,
     prepare_model_inputs,
@@ -59,9 +58,9 @@ if __name__ == "__main__":
     print("Main file")
     # Construct the source and destination paths with current working directory
     # Uncomment (Run once to create JSON AST nodes)
-    # source_path = os.path.join(os.getcwd(), "..", "data", "cases")
-    # output_path = os.path.join(os.getcwd(), "..", "ast_data")
-    # process_all_files(source_path, output_path)
+    source_path = os.path.join(os.getcwd(), "..", "data", "cases")
+    output_path = os.path.join(os.getcwd(), "..", "ast_data")
+    process_all_files(source_path, output_path)
 
     # print("Processing AST matrix data...")
 
@@ -107,10 +106,11 @@ if __name__ == "__main__":
     #     y=case_labels_test,
     # )
     # print(f"Test results: {results}")
-    
+
     #############################
     # PROCESS DATA AUGMENTATION #
     #############################
-    augment_data_directory(
-       src_csv_path="/Users/Guty/Downloads/conplag/versions"
-    )
+    # augment_data_directory(
+    #    src_csv_path="/Users/Guty/Downloads/conplag/versions"
+    # )
+    
