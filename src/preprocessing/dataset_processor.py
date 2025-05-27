@@ -18,7 +18,32 @@ CATEGORIES: list[str] = [
     "original"
 ]
 
-def collect_java_files(src_root: Path) -> list[tuple[Path, Path]]:
+def append_java_files_to_list(
+    all_files: list[tuple[Path, Path]],
+    cat_folder: Path,
+    src_root: Path
+) -> list[tuple[Path, Path]]:
+    '''
+    Appends Java files from a category folder to the all_files list.
+    Args:
+        all_files: List to append the tuples of\
+            (input_java_path, output_json_path_relative_to_src_root).
+        cat_folder: Path to the category folder containing Java files.
+        src_root: Root path of the source directory, used to compute relative paths.
+    Returns:
+        all_files:
+        Updated list of tuples with Java files and their corresponding output paths.
+        '''
+    for java_file in cat_folder.glob("*.java"):
+        rel_path = java_file.relative_to(src_root)
+        output_path = rel_path.with_suffix(".json")
+        all_files.append((java_file, output_path))
+    return all_files
+
+def collect_java_files(
+    src_root: Path,
+    has_nested_dirs: bool = True
+) -> list[tuple[Path, Path]]:
     """
     Traverse all case folders and collect Java files with their target output paths.
     Returns:
@@ -35,38 +60,56 @@ def collect_java_files(src_root: Path) -> list[tuple[Path, Path]]:
             if not cat_folder.is_dir():
                 continue
 
-            if category == "plagiarized":
-                for folder in cat_folder.iterdir():
-                    if not folder.is_dir():
-                        continue
-                    for version_folder in folder.iterdir():
-                        if not version_folder.is_dir():
+            match category:
+                case "plagiarized":
+                    if len(list(case_folder.iterdir())) == 2:
+                        append_java_files_to_list(
+                            all_files,
+                            cat_folder,
+                            src_root
+                        )
+                    for folder in cat_folder.iterdir():
+                        if not folder.is_dir():
                             continue
-                        for java_file in version_folder.glob("*.java"):
-                            rel_path = java_file.relative_to(src_root)
-                            output_path = rel_path.with_suffix(".json")
-                            all_files.append((java_file, output_path))
-
-            elif category == "non-plagiarized":
-                for folder in cat_folder.iterdir():
-                    if not folder.is_dir():
+                        for version_folder in folder.iterdir():
+                            if not version_folder.is_dir():
+                                continue
+                            append_java_files_to_list(
+                                all_files,
+                                version_folder,
+                                src_root
+                            )
+                case "non-plagiarized":
+                    if len(list(case_folder.iterdir())) == 2:
+                        append_java_files_to_list(
+                            all_files,
+                            cat_folder,
+                            src_root
+                        )
                         continue
-                    for java_file in folder.glob("*.java"):
-                        rel_path = java_file.relative_to(src_root)
-                        output_path = rel_path.with_suffix(".json")
-                        all_files.append((java_file, output_path))
-
-            elif category == "original":
-                for java_file in cat_folder.glob("*.java"):
-                    rel_path = java_file.relative_to(src_root)
-                    output_path = rel_path.with_suffix(".json")
-                    all_files.append((java_file, output_path))
-
+                    for folder in cat_folder.iterdir():
+                        if not folder.is_dir():
+                            continue
+                        append_java_files_to_list(
+                            all_files,
+                            folder,
+                            src_root
+                        )
+                case "original":
+                    if len(list(case_folder.iterdir())) > 2:
+                        append_java_files_to_list(
+                            all_files,
+                            cat_folder,
+                            src_root
+                        )
+                case _:
+                    raise ValueError(f"Unknown category: {category}")
     return all_files
 
 def process_all_files(src_root: str, dst_root: str):
     """
-    Process all Java files from the source root and write their parsed AST as JSON in the destination.
+    Process all Java files from the source root and write their parsed\
+        AST as JSON in the destination.
     Shows a single global progress bar.
     """
     src_root = Path(src_root)
@@ -94,7 +137,33 @@ def process_all_files(src_root: str, dst_root: str):
                 tqdm.write(f"Error processing {java_file}: {e}")
             pbar.update(1)
 
-def create_dictionary_from_files(input_path: str) -> Tuple[Dict[str, Tuple[str, np.ndarray]], Dict[str, Tuple[str, np.ndarray]]]:
+def update_matrix_dict(
+    matrix_dict: Dict[str, Tuple[str, np.ndarray]],
+    version_folder: Path,
+    case_name: str
+) -> None:
+    '''
+    Updates the matrix_dict with matrices from the given version folder.
+    Args:
+        matrix_dict: Dictionary to update with new matrices.
+        version_folder: Path to the folder containing JSON files.
+        case_name: Name of the case to use in the keys.
+    Returns:
+        None
+    '''
+    for file in version_folder.glob("*.json"):
+        tree = read_ast_from_file(str(file))
+        if tree is None:
+            continue
+        graph = traverse_ast(tree)
+        matrix = encode_features(graph)
+        key = f"nonplag-{case_name}-{file.stem}"
+        matrix_dict[key] = (case_name, matrix)
+
+def create_dictionary_from_files(
+    input_path: str,
+    has_nested_dirs: bool = True
+) -> Tuple[Dict[str, Tuple[str, np.ndarray]], Dict[str, Tuple[str, np.ndarray]]]:
     """
     Parses AST JSON files into a dictionary of encoded matrices.
     Returns:
@@ -116,44 +185,53 @@ def create_dictionary_from_files(input_path: str) -> Tuple[Dict[str, Tuple[str, 
             if not cat_path.exists():
                 continue
 
-            if category == "plagiarized":
-                for level_folder in cat_path.iterdir():
-                    if not level_folder.is_dir():
+            match category:
+                case "plagiarized":
+                    if len(list(case_folder.iterdir())) == 2:
+                        update_matrix_dict(
+                            matrix_dict,
+                            cat_path,
+                            case_name
+                        )
+
+                    for level_folder in cat_path.iterdir():
+                        if not level_folder.is_dir():
+                            continue
+                        for version_folder in level_folder.iterdir():
+                            if not version_folder.is_dir():
+                                continue
+                            update_matrix_dict(
+                                matrix_dict,
+                                version_folder,
+                                case_name
+                            )
+
+                case "non-plagiarized":
+                    if len(list(case_folder.iterdir())) == 2:
+                        update_matrix_dict(
+                            matrix_dict,
+                            cat_path,
+                            case_name
+                        )
                         continue
-                    for version_folder in level_folder.iterdir():
+                    for version_folder in cat_path.iterdir():
                         if not version_folder.is_dir():
                             continue
-                        for file in version_folder.glob("*.json"):
-                            tree = read_ast_from_file(str(file))
-                            if tree is None:
-                                continue
-                            graph = traverse_ast(tree)
-                            matrix = encode_features(graph)
-                            key = f"plag-{case_name}-{file.stem}"
-                            matrix_dict[key] = (case_name, matrix)
+                        update_matrix_dict(
+                            matrix_dict,
+                            version_folder,
+                            case_name
+                        )
 
-            elif category == "non-plagiarized":
-                for version_folder in cat_path.iterdir():
-                    if not version_folder.is_dir():
-                        continue
-                    for file in version_folder.glob("*.json"):
-                        tree = read_ast_from_file(str(file))
-                        if tree is None:
-                            continue
-                        graph = traverse_ast(tree)
-                        matrix = encode_features(graph)
-                        key = f"nonplag-{case_name}-{file.stem}"
-                        matrix_dict[key] = (case_name, matrix)
-
-            elif category == "original":
-                for file in cat_path.glob("*.json"):
-                    tree = read_ast_from_file(str(file))
-                    if tree is None:
-                        continue
-                    graph = traverse_ast(tree)
-                    matrix = encode_features(graph)
-                    key = f"orig-{case_name}-{file.stem}"
-                    original_dict[key] = (case_name, matrix)
+                case "original":
+                    if len(list(case_folder.iterdir())) > 2:
+                        update_matrix_dict(
+                            original_dict,
+                            cat_path,
+                            case_name
+                        )
+                case _:
+                    raise ValueError(f"Unknown category: {category}")
 
     return matrix_dict, original_dict
 
@@ -209,4 +287,3 @@ def create_data_split_from_dict(
     for key, (case, matrix) in original_dict.items():
         file_path = base_dir / "original" / case / f"{key}.txt"
         write_matrix(str(file_path), matrix)
-
