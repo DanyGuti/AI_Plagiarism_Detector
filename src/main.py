@@ -21,6 +21,8 @@ from models.cnn_model import (
 )
 from features.ast_embedding import ast_embedding
 from preprocessing.data_augmentor import augment_data_directory
+from collections import Counter
+
 
 CASES: list[str] = [f"case-0{i}" for i in range(1, 29)]
 
@@ -91,6 +93,11 @@ def train_and_evaluate_model():
 
     results = model.evaluate(x=test_inputs, y=test_labels)
     print(f"Test results: {results}")
+
+    print("Train label distribution:", Counter(train_labels))
+    print("Validation label distribution:", Counter(val_labels))
+    print("Test label distribution:", Counter(test_labels))
+
 
 
 def augment_code_data():

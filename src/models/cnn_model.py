@@ -20,7 +20,7 @@ def load_folder_data(folder_path: str, case_folder: str) -> tuple[list[dict], li
         with file.open("r") as f:
             lines = f.readlines()
 
-        label = 0 if "nonplag" in file.name.lower() else 1
+        label = 0 if "non" in file.name.lower() and "plagiarized" in file.name.lower() else 1
         sample = {
             "type_ids": [],
             "token_ids": [],
