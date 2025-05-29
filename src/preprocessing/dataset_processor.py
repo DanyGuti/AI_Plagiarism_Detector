@@ -11,6 +11,7 @@ import numpy as np
 from tqdm import tqdm
 from features.ast_encoding import traverse_ast, encode_features, read_ast_from_file
 from .parser_utils import parse_java_code
+import concurrent.futures
 
 CATEGORIES: list[str] = [
     "plagiarized",
@@ -106,10 +107,25 @@ def collect_java_files(
                     raise ValueError(f"Unknown category: {category}")
     return all_files
 
-def process_all_files(src_root: str, dst_root: str):
+def _process_single_file(args):
+    java_file, rel_output, dst_root = args
+    try:
+        with open(java_file, "r", encoding="utf-8") as f:
+            code = f.read()
+        ast = parse_java_code(code)
+        output_path = dst_root / rel_output
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(output_path, "w", encoding="utf-8") as out_f:
+            json.dump(ast, out_f, indent=2)
+        return None
+    except Exception as e:
+        return f"Error processing {java_file}: {e}"
+
+
+def process_all_files(src_root: str, dst_root: str, max_workers: int = None):
     """
-    Process all Java files from the source root and write their parsed\
-        AST as JSON in the destination.
+    Process all Java files from the source root and write their parsed
+    AST as JSON in the destination, in parallel.
     Shows a single global progress bar.
     """
     src_root = Path(src_root)
@@ -121,26 +137,20 @@ def process_all_files(src_root: str, dst_root: str):
         raise ValueError(f"Destination root {dst_root} is not a directory.")
 
     all_files = collect_java_files(src_root)
+    tasks = [(java_file, rel_output, dst_root) for java_file, rel_output in all_files]
 
-    with tqdm(total=len(all_files), desc="Processing Java files", unit="file") as pbar:
-        for java_file, rel_output in all_files:
-            try:
-                with open(java_file, "r", encoding="utf-8") as f:
-                    code = f.read()
-                ast = parse_java_code(code)
-
-                output_path = dst_root / rel_output
-                output_path.parent.mkdir(parents=True, exist_ok=True)
-                with open(output_path, "w", encoding="utf-8") as out_f:
-                    json.dump(ast, out_f, indent=2)
-            except Exception as e:
-                tqdm.write(f"Error processing {java_file}: {e}")
-            pbar.update(1)
+    with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
+        with tqdm(total=len(tasks), desc="Processing Java files", unit="file") as pbar:
+            for result in executor.map(_process_single_file, tasks):
+                if result is not None:
+                    tqdm.write(result)
+                pbar.update(1)
 
 def update_matrix_dict(
     matrix_dict: Dict[str, Tuple[str, np.ndarray]],
     version_folder: Path,
-    case_name: str
+    case_name: str,
+    key_prefix: str
 ) -> None:
     '''
     Updates the matrix_dict with matrices from the given version folder.
@@ -157,7 +167,7 @@ def update_matrix_dict(
             continue
         graph = traverse_ast(tree)
         matrix = encode_features(graph)
-        key = f"nonplag-{case_name}-{file.stem}"
+        key = f"{key_prefix}-{case_name}-{file.stem}"
         matrix_dict[key] = (case_name, matrix)
 
 def create_dictionary_from_files(
@@ -191,7 +201,8 @@ def create_dictionary_from_files(
                         update_matrix_dict(
                             matrix_dict,
                             cat_path,
-                            case_name
+                            case_name,
+                            key_prefix="plagiarized"
                         )
 
                     for level_folder in cat_path.iterdir():
@@ -203,7 +214,8 @@ def create_dictionary_from_files(
                             update_matrix_dict(
                                 matrix_dict,
                                 version_folder,
-                                case_name
+                                case_name,
+                                key_prefix="plagiarized"
                             )
 
                 case "non-plagiarized":
@@ -211,7 +223,8 @@ def create_dictionary_from_files(
                         update_matrix_dict(
                             matrix_dict,
                             cat_path,
-                            case_name
+                            case_name,
+                            key_prefix="non-plagiarized"
                         )
                         continue
                     for version_folder in cat_path.iterdir():
@@ -220,7 +233,8 @@ def create_dictionary_from_files(
                         update_matrix_dict(
                             matrix_dict,
                             version_folder,
-                            case_name
+                            case_name,
+                            key_prefix="non-plagiarized"
                         )
 
                 case "original":
@@ -228,7 +242,8 @@ def create_dictionary_from_files(
                         update_matrix_dict(
                             original_dict,
                             cat_path,
-                            case_name
+                            case_name,
+                            key_prefix="original"
                         )
                 case _:
                     raise ValueError(f"Unknown category: {category}")

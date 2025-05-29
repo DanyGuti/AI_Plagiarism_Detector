@@ -71,14 +71,15 @@ def binary_plagiarism_code_prediction(
     labels: np.ndarray,
     input_data: dict[str, keras.KerasTensor],
     val_data: tuple[dict[str, keras.KerasTensor], np.ndarray],
+    test_data: tuple[dict[str, keras.KerasTensor], np.ndarray] = None,
 ) -> keras.Model:
     inputs = embedding_model.inputs
     ast_output = embedding_model.outputs[0]
     
-    x = keras.layers.GlobalAveragePooling1D()(ast_output)
+    x = keras.layers.Flatten()(ast_output)  # Flatten the output of the embedding model
     x = keras.layers.Dropout(0.3)(x)  # Regularization
     x = keras.layers.Dense(64, activation='relu')(x)  # Smaller dense layer
-    x = keras.layers.Dropout(0.3)(x)
+    x = keras.layers.Dropout(0.5)(x)
 
     output = keras.layers.Dense(1, activation="sigmoid", name="output")(x)
 
@@ -86,50 +87,75 @@ def binary_plagiarism_code_prediction(
     model.compile(
         optimizer=keras.optimizers.Adam(learning_rate=1e-5),
         loss='binary_crossentropy',
-        metrics=['binary_accuracy'],
+        metrics=['accuracy']
     )
     model.summary()
 
-    early_stop = keras.callbacks.EarlyStopping(
-        monitor='val_loss',
-        patience=3,
-        restore_best_weights=True
-    )
+    # early_stop = keras.callbacks.EarlyStopping(
+    #     monitor='val_loss',
+    #     patience=3,
+    #     restore_best_weights=True
+    # )
 
     history = model.fit(
         x=input_data,
         y=labels,
         epochs=50,
         validation_data=val_data,
-        callbacks=[early_stop],
+        # callbacks=[early_stop],
         batch_size=16  # Helps with small data
     )
 
     model.save("ast_cnn_model.keras")
-    plot_history(history)
+    plot_history(history, save=True, prefix="ast_cnn_model")
+
+    if test_data is not None:
+        test_loss, test_accuracy = model.evaluate(test_data[0], test_data[1])
+        print(f"Test Loss: {test_loss}, Test Accuracy: {test_accuracy}")
     return model
 
 
-def plot_history(history: keras.callbacks.History) -> None:
+import matplotlib.pyplot as plt
+from tensorflow import keras
+import os
+# ...existing code...
+def plot_history(history: keras.callbacks.History, save: bool = False, prefix: str = "training_plot") -> None:
     '''
     Plot the training and validation accuracy and loss.
+
     Args:
         history (keras.callbacks.History): The training history.
+        save (bool): Whether to save the plots as PNG files instead of showing them.
+        prefix (str): Filename prefix if saving plots.
     '''
-    # Plot training & validation accuracy values
-    plt.plot(history.history['binary_accuracy'], 'b-', label='Train Accuracy')   # blue line
-    plt.plot(history.history['val_binary_accuracy'], 'bo', label='Val Accuracy') # blue circle markers
-    plt.title('Model accuracy')
+    image_dir = "images"
+    if save:
+        os.makedirs(image_dir, exist_ok=True)
+
+    # Plot training & validation accuracy
+    plt.figure()
+    plt.plot(history.history['accuracy'], 'b-', label='Train Accuracy')
+    plt.plot(history.history['val_accuracy'], 'bo', label='Val Accuracy')
+    plt.title('Model Accuracy')
     plt.ylabel('Accuracy')
     plt.xlabel('Epoch')
     plt.legend(loc='upper left')
-    plt.show()
+    if save:
+        plt.savefig(os.path.join(image_dir, f'{prefix}_accuracy.png'))
+    else:
+        plt.show()
+    plt.close()
 
-    # Plot training & validation loss values
+    # Plot training & validation loss
+    plt.figure()
     plt.plot(history.history['loss'], 'r-', label='Train Loss')
     plt.plot(history.history['val_loss'], 'ro', label='Val Loss')
-    plt.title('Model loss')
+    plt.title('Model Loss')
     plt.ylabel('Loss')
     plt.xlabel('Epoch')
     plt.legend(loc='upper left')
-    plt.show()
+    if save:
+        plt.savefig(os.path.join(image_dir, f'{prefix}_loss.png'))
+    else:
+        plt.show()
+    plt.close()
