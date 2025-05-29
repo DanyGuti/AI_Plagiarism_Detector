@@ -67,14 +67,19 @@ def binary_plagiarism_code_prediction(
 ) -> keras.Model:
     """Create, train, and evaluate a binary classification CNN model."""
     x = keras.layers.Flatten()(embedding_model.output)
+    x = keras.layers.Dense(128, activation='relu',
+                           kernel_initializer='he_normal'
+                           )(x)
     x = keras.layers.Dropout(0.3)(x)
-    x = keras.layers.Dense(64, activation='relu')(x)
-    x = keras.layers.Dropout(0.5)(x)
+    x = keras.layers.Dense(64, activation='relu',
+                           kernel_initializer='he_normal'
+                           )(x)
+    x = keras.layers.Dropout(0.3)(x)
 
     output = keras.layers.Dense(1, activation="sigmoid", name="output")(x)
     model = keras.Model(inputs=embedding_model.input, outputs=output)
 
-    model.compile(optimizer=keras.optimizers.Adam(learning_rate=1e-5),
+    model.compile(optimizer=keras.optimizers.Adam(learning_rate=1e-3),
                   loss='binary_crossentropy',
                   metrics=['accuracy'])
     model.summary()
@@ -82,9 +87,9 @@ def binary_plagiarism_code_prediction(
     history = model.fit(
         x=input_data,
         y=labels,
-        epochs=50,
+        epochs=30,
         validation_data=val_data,
-        batch_size=16,
+        batch_size=32,
         # callbacks=[keras.callbacks.EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)]
     )
 
