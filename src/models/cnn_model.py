@@ -71,12 +71,12 @@ def binary_plagiarism_code_prediction(
                            kernel_initializer='he_normal',
                             kernel_regularizer=keras.regularizers.l2(0.02)
                            )(x)
-    x = keras.layers.Dropout(0.4    )(x)
+    x = keras.layers.Dropout(0.4)(x)
     x = keras.layers.Dense(64, activation='relu',
                            kernel_initializer='he_normal',
                            kernel_regularizer=keras.regularizers.l2(0.02)
                            )(x)
-    x = keras.layers.Dropout(0.4)(x)
+    x = keras.layers.Dropout(0.3)(x)
     x = keras.layers.Dense(32, activation='relu',
                            kernel_initializer='he_normal',
                            kernel_regularizer=keras.regularizers.l2(0.02)
@@ -90,13 +90,21 @@ def binary_plagiarism_code_prediction(
                   metrics=['accuracy'])
     model.summary()
 
+    model_checkpoint = keras.callbacks.ModelCheckpoint(
+        "ast_cnn_model.keras",
+        monitor='val_accuracy',
+        save_best_only=True,
+        mode='max',
+        verbose=1
+    )
+
     history = model.fit(
         x=input_data,
         y=labels,
         epochs=50,
         validation_data=val_data,
         batch_size=32,
-        # callbacks=[keras.callbacks.EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)]
+        callbacks=[model_checkpoint]
     )
 
     model.save("ast_cnn_model.keras")
