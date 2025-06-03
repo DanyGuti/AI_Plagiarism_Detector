@@ -59,6 +59,11 @@ def prepare_model_inputs(features: dict[str, np.ndarray], name_prefix="ast") -> 
     }
 
 
+from sklearn.utils.class_weight import compute_class_weight
+from sklearn.metrics import recall_score
+from tensorflow import keras
+import numpy as np
+
 def binary_plagiarism_code_prediction(
     embedding_model: keras.Model,
     labels: np.ndarray,
@@ -66,20 +71,22 @@ def binary_plagiarism_code_prediction(
     val_data: tuple[dict[str, np.ndarray], np.ndarray],
     test_data: tuple[dict[str, np.ndarray], np.ndarray] = None
 ) -> keras.Model:
-    """Create, train, and evaluate a binary classification CNN model with class weighting."""
+    """Create, train, and evaluate a binary classification CNN model with class weighting and batch normalization."""
 
     x = keras.layers.GlobalAveragePooling1D()(embedding_model.output)
-    x = keras.layers.Dense(128, activation='relu',
-                           kernel_initializer='he_normal',
-                           kernel_regularizer=keras.regularizers.l2(0.02))(x)
+    x = keras.layers.Dense(128, kernel_initializer='he_normal', kernel_regularizer=keras.regularizers.l2(0.02))(x)
+    x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.Activation('relu')(x)
     x = keras.layers.Dropout(0.4)(x)
-    x = keras.layers.Dense(64, activation='relu',
-                           kernel_initializer='he_normal',
-                           kernel_regularizer=keras.regularizers.l2(0.02))(x)
+
+    x = keras.layers.Dense(64, kernel_initializer='he_normal', kernel_regularizer=keras.regularizers.l2(0.02))(x)
+    x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.Activation('relu')(x)
     x = keras.layers.Dropout(0.3)(x)
-    x = keras.layers.Dense(32, activation='relu',
-                           kernel_initializer='he_normal',
-                           kernel_regularizer=keras.regularizers.l2(0.02))(x)
+
+    x = keras.layers.Dense(32, kernel_initializer='he_normal', kernel_regularizer=keras.regularizers.l2(0.02))(x)
+    x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.Activation('relu')(x)
 
     output = keras.layers.Dense(1, activation="sigmoid", name="output")(x)
     model = keras.Model(inputs=embedding_model.input, outputs=output)
@@ -97,7 +104,6 @@ def binary_plagiarism_code_prediction(
         verbose=1
     )
 
-    # Compute class weights
     class_weights = compute_class_weight(
         class_weight='balanced',
         classes=np.unique(labels),
@@ -112,7 +118,7 @@ def binary_plagiarism_code_prediction(
         validation_data=val_data,
         batch_size=32,
         callbacks=[model_checkpoint],
-        class_weight=class_weight_dict  # Apply class weights here
+        class_weight=class_weight_dict
     )
 
     model.save("ast_cnn_model.keras")
@@ -123,6 +129,7 @@ def binary_plagiarism_code_prediction(
         print(f"Test Loss: {test_loss}, Test Accuracy: {test_acc}")
 
     return model
+
 
 def plot_history(history: keras.callbacks.History, save: bool = False, prefix: str = "training_plot"):
     """Plot and optionally save training history."""
