@@ -9,6 +9,7 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 from tensorflow import keras
+from sklearn.utils.class_weight import compute_class_weight
 
 
 def load_folder_data(folder_path: str, case_folder: str) -> tuple[list[dict], list[int]]:
@@ -65,27 +66,25 @@ def binary_plagiarism_code_prediction(
     val_data: tuple[dict[str, np.ndarray], np.ndarray],
     test_data: tuple[dict[str, np.ndarray], np.ndarray] = None
 ) -> keras.Model:
-    """Create, train, and evaluate a binary classification CNN model."""
-    x = keras.layers.Flatten()(embedding_model.output)
+    """Create, train, and evaluate a binary classification CNN model with class weighting."""
+
+    x = keras.layers.GlobalAveragePooling1D()(embedding_model.output)
     x = keras.layers.Dense(128, activation='relu',
                            kernel_initializer='he_normal',
-                            kernel_regularizer=keras.regularizers.l2(0.02)
-                           )(x)
+                           kernel_regularizer=keras.regularizers.l2(0.02))(x)
     x = keras.layers.Dropout(0.4)(x)
     x = keras.layers.Dense(64, activation='relu',
                            kernel_initializer='he_normal',
-                           kernel_regularizer=keras.regularizers.l2(0.02)
-                           )(x)
+                           kernel_regularizer=keras.regularizers.l2(0.02))(x)
     x = keras.layers.Dropout(0.3)(x)
     x = keras.layers.Dense(32, activation='relu',
                            kernel_initializer='he_normal',
-                           kernel_regularizer=keras.regularizers.l2(0.02)
-                           )(x)
+                           kernel_regularizer=keras.regularizers.l2(0.02))(x)
 
     output = keras.layers.Dense(1, activation="sigmoid", name="output")(x)
     model = keras.Model(inputs=embedding_model.input, outputs=output)
 
-    model.compile(optimizer=keras.optimizers.Adam(learning_rate=1e-3),
+    model.compile(optimizer=keras.optimizers.Adam(learning_rate=1e-4),
                   loss='binary_crossentropy',
                   metrics=['accuracy'])
     model.summary()
@@ -98,13 +97,22 @@ def binary_plagiarism_code_prediction(
         verbose=1
     )
 
+    # Compute class weights
+    class_weights = compute_class_weight(
+        class_weight='balanced',
+        classes=np.unique(labels),
+        y=labels
+    )
+    class_weight_dict = {i: w for i, w in enumerate(class_weights)}
+
     history = model.fit(
         x=input_data,
         y=labels,
         epochs=50,
         validation_data=val_data,
         batch_size=32,
-        callbacks=[model_checkpoint]
+        callbacks=[model_checkpoint],
+        class_weight=class_weight_dict  # Apply class weights here
     )
 
     model.save("ast_cnn_model.keras")
@@ -115,7 +123,6 @@ def binary_plagiarism_code_prediction(
         print(f"Test Loss: {test_loss}, Test Accuracy: {test_acc}")
 
     return model
-
 
 def plot_history(history: keras.callbacks.History, save: bool = False, prefix: str = "training_plot"):
     """Plot and optionally save training history."""

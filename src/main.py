@@ -76,9 +76,9 @@ def train_and_evaluate_model():
     val_features, val_labels = load_dataset(val_path)
     test_features, test_labels = load_dataset(test_path)
 
-    train_inputs = prepare_model_inputs(train_features, name_prefix="ast")
-    val_inputs = prepare_model_inputs(val_features, name_prefix="ast")
-    test_inputs = prepare_model_inputs(test_features, name_prefix="ast")
+    train_inputs = prepare_model_inputs(train_features)
+    val_inputs = prepare_model_inputs(val_features)
+    test_inputs = prepare_model_inputs(test_features)
 
     ast_model = ast_embedding("ast")
     _ = ast_model(train_inputs)  # Run once to initialize
