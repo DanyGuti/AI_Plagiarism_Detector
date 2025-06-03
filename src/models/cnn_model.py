@@ -74,18 +74,16 @@ def binary_plagiarism_code_prediction(
     """Create, train, and evaluate a binary classification CNN model with class weighting and batch normalization."""
 
     x = keras.layers.GlobalAveragePooling1D()(embedding_model.output)
-    x = keras.layers.Dense(128, kernel_initializer='he_normal', kernel_regularizer=keras.regularizers.l2(0.02))(x)
+    x = keras.layers.Dense(128, kernel_initializer='he_normal', kernel_regularizer=keras.regularizers.l2(0.002))(x)
     x = keras.layers.BatchNormalization()(x)
     x = keras.layers.Activation('relu')(x)
     x = keras.layers.Dropout(0.4)(x)
 
-    x = keras.layers.Dense(64, kernel_initializer='he_normal', kernel_regularizer=keras.regularizers.l2(0.02))(x)
-    x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.Dense(64, kernel_initializer='he_normal', kernel_regularizer=keras.regularizers.l2(0.002))(x)
     x = keras.layers.Activation('relu')(x)
     x = keras.layers.Dropout(0.3)(x)
 
-    x = keras.layers.Dense(32, kernel_initializer='he_normal', kernel_regularizer=keras.regularizers.l2(0.02))(x)
-    x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.Dense(32, kernel_initializer='he_normal', kernel_regularizer=keras.regularizers.l2(0.002))(x)
     x = keras.layers.Activation('relu')(x)
 
     output = keras.layers.Dense(1, activation="sigmoid", name="output")(x)
