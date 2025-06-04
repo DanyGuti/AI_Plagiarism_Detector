@@ -1,10 +1,11 @@
 '''
-This module provides utility functions for parsing Java code using ANTLR.'''
-from antlr4 import *
+- Parser Utils Module
+This module provides utility functions for parsing Java code using ANTLR.
+'''
+from antlr4 import InputStream, CommonTokenStream
 from antlr.Java20Lexer import Java20Lexer
 from antlr.Java20Parser import Java20Parser
 from antlr.JavaVisitorImpl import JavaParserVisitorImpl
-from antlr.Java20ParserVisitor import Java20ParserVisitor
 
 def parse_java_code(code: str):
     """

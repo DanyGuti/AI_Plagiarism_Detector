@@ -1,13 +1,17 @@
+'''
+- Dataser Processor for the Java AST dataset.
+'''
+
 from pathlib import Path
 from typing import Dict, Tuple
 import os
 import random
 import json
+import concurrent.futures
 import numpy as np
 from tqdm import tqdm
 from features.ast_encoding import traverse_ast, encode_features, read_ast_from_file
 from .parser_utils import parse_java_code
-import concurrent.futures
 
 CATEGORIES: list[str] = [
     "plagiarized",
@@ -15,14 +19,36 @@ CATEGORIES: list[str] = [
     "original"
 ]
 
-def append_java_files_to_list(all_files, cat_folder, src_root):
+def append_java_files_to_list(
+    all_files: list[Tuple[Path, Path]],
+    cat_folder: Path,
+    src_root: Path
+) -> list[Tuple[Path, Path]]:
+    '''
+    Appends Java files from a category folder to the list of all files.
+    Args:
+        all_files (list): List to append the Java files to.
+        cat_folder (Path): Path to the category folder containing Java files.
+        src_root (Path): Root path of the source files.
+    Returns:
+        list: Updated list of all files with Java files and their output paths.
+    '''
     for java_file in cat_folder.glob("*.java"):
         rel_path = java_file.relative_to(src_root)
         output_path = rel_path.with_suffix(".json")
         all_files.append((java_file, output_path))
     return all_files
 
-def collect_java_files(src_root: Path, has_nested_dirs: bool = True):
+def collect_java_files(
+    src_root: Path,
+) -> list[tuple[Path, Path]]:
+    '''
+    Collects all Java files from the source root directory and its subdirectories.
+    Args:
+        src_root (Path): Root path of the source files.
+    Returns:
+        list: List of tuples containing Java file paths and their corresponding output paths.
+    '''
     all_files = []
 
     for case_folder in src_root.iterdir():
@@ -62,7 +88,17 @@ def collect_java_files(src_root: Path, has_nested_dirs: bool = True):
                     raise ValueError(f"Unknown category: {category}")
     return all_files
 
-def _process_single_file(args):
+def _process_single_file(
+    args: tuple[Path, Path, Path]
+) -> None | str:
+    '''
+    Processes a single Java file, parses it, and saves the AST to a JSON file.
+    Args:
+        args (tuple): A tuple containing the Java file path, relative output path,\
+        and destination root.
+    Returns:
+        None or str: Returns None if successful, or an error message if an exception occurs.
+    '''
     java_file, rel_output, dst_root = args
     try:
         with open(java_file, "r", encoding="utf-8") as f:
@@ -73,10 +109,24 @@ def _process_single_file(args):
         with open(output_path, "w", encoding="utf-8") as out_f:
             json.dump(ast, out_f, indent=2)
         return None
-    except Exception as e:
+    except (IOError, ValueError) as e:
         return f"Error processing {java_file}: {e}"
 
-def process_all_files(src_root: str, dst_root: str, max_workers: int = None):
+def process_all_files(
+    src_root: str,
+    dst_root: str,
+    max_workers: int = None
+) -> None:
+    '''
+    Processes all Java files in the source root directory and saves their ASTs\
+        to JSON files in the destination root directory.
+    Args:
+        src_root (str): Root path of the source files.
+        dst_root (str): Root path where the output JSON files will be saved.
+        max_workers (int): Maximum number of worker threads to use for processing.
+    Returns:
+        None
+    '''
     src_root = Path(src_root)
     dst_root = Path(dst_root)
 
@@ -102,6 +152,18 @@ def update_matrix_dict(
     key_prefix: str,
     label: int
 ) -> None:
+    '''
+    Helper function that updates the matrix dictionary with features extracted from JSON\
+    files in the specified version folder.
+    Args:
+        matrix_dict (dict): Dictionary to update with features.
+        version_folder (Path): Path to the folder containing JSON files.
+        case_name (str): Name of the case to use in the key.
+        key_prefix (str): Prefix for the key in the matrix dictionary.
+        label (int): Label for the case (1 for plagiarized, 0 for non-plagiarized).
+    Returns:
+        None
+    '''
     for file in version_folder.glob("*.json"):
         tree = read_ast_from_file(str(file))
         if tree is None:
@@ -111,7 +173,20 @@ def update_matrix_dict(
         key = f"{key_prefix}-{case_name}-{file.stem}"
         matrix_dict[key] = (case_name, matrix, label)
 
-def create_dictionary_from_files(input_path: str, has_nested_dirs: bool = True):
+def create_dictionary_from_files(
+    input_path: str,
+) -> Tuple[Dict[str, Tuple[str, np.ndarray, int]], Dict[str, Tuple[str, np.ndarray]]]:
+    '''
+    Creates a dictionary of matrices from the JSON files in the input path.
+    Args:
+        input_path (str): Path to the directory containing case folders.
+    Returns:
+        tuple: A tuple containing two dictionaries:
+            - matrix_dict: Dictionary with keys as case names and values as tuples of\
+                (case name, matrix, label).
+            - original_dict: Dictionary with keys as original case names and values as\
+                tuples of (case name, matrix).
+    '''
     input_path = Path(input_path)
     matrix_dict = {}
     original_dict = {}
@@ -136,7 +211,10 @@ def create_dictionary_from_files(input_path: str, has_nested_dirs: bool = True):
                         for version_folder in level_folder.iterdir():
                             if not version_folder.is_dir():
                                 continue
-                            update_matrix_dict(matrix_dict, version_folder, case_name, "plagiarized", 1)
+                            update_matrix_dict(
+                                matrix_dict, version_folder,
+                                case_name, "plagiarized", 1
+                            )
 
                 case "non-plagiarized":
                     if len(list(case_folder.iterdir())) == 2:
@@ -145,7 +223,10 @@ def create_dictionary_from_files(input_path: str, has_nested_dirs: bool = True):
                     for version_folder in cat_path.iterdir():
                         if not version_folder.is_dir():
                             continue
-                        update_matrix_dict(matrix_dict, version_folder, case_name, "non-plagiarized", 0)
+                        update_matrix_dict(
+                            matrix_dict, version_folder,
+                            case_name, "non-plagiarized", 0
+                        )
 
                 case "original":
                     if len(list(case_folder.iterdir())) > 2:
@@ -163,6 +244,14 @@ def create_dictionary_from_files(input_path: str, has_nested_dirs: bool = True):
     return matrix_dict, original_dict
 
 def write_matrix(file_path: str, matrix: np.ndarray):
+    '''
+    Writes a matrix to a text file.
+    Args:
+        file_path (str): Path to the output text file.
+        matrix (np.ndarray): Matrix to write to the file.
+    Returns:
+        None
+    '''
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
     with open(file_path, "w", encoding="utf-8") as f:
         for row in matrix:
@@ -175,6 +264,18 @@ def create_data_split_from_dict(
     val_split: float = 0.2,
     test_split: float = 0.2,
 ):
+    '''
+    Splits the data into training, validation, and test sets based on\
+        the provided splits.
+    Args:
+        matrix_dict (dict): Dictionary containing matrices with keys as case names.
+        original_dict (dict): Dictionary containing original matrices with keys as case names.
+        train_split (float): Proportion of data to use for training.
+        val_split (float): Proportion of data to use for validation.
+        test_split (float): Proportion of data to use for testing.
+    Returns:
+        None
+    '''
     if not np.isclose(train_split + val_split + test_split, 1.0):
         raise ValueError("Splits must sum to 1.0")
 
@@ -207,7 +308,7 @@ def create_data_split_from_dict(
 
     for split_name, labels in label_data.items():
         label_file = base_dir / f"{split_name}_labels.json"
-        with open(label_file, "w") as f:
+        with open(label_file, "w", encoding='utf-8') as f:
             json.dump(labels, f, indent=2)
 
     for key, (case, matrix) in original_dict.items():
