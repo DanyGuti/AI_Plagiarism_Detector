@@ -30,6 +30,7 @@ from models.cnn_model import (
     prepare_model_inputs,
     binary_plagiarism_code_prediction,
 )
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 
 CASES = [f"case-0{i}" for i in range(1, 29)]
 
@@ -129,7 +130,6 @@ def plot_history(history, save=False, prefix="plot"):
             plt.savefig(f"images/{prefix}_{metric}.png")
         plt.close()
 
-
 def evaluate_saved_model(model_path: str):
     test_path = get_project_path("matrix_data", "test")
     features, labels = load_dataset(test_path)
@@ -137,8 +137,19 @@ def evaluate_saved_model(model_path: str):
     model = keras.models.load_model(model_path)
     preds = (model.predict(inputs) > 0.5).astype(int)
 
-    print("Classification Report:")
-    print(classification_report(labels, preds, target_names=["Non-Plagiarized", "Plagiarized"]))
+    # Compute metrics
+    acc = accuracy_score(labels, preds)
+    precision = precision_score(labels, preds)
+    recall = recall_score(labels, preds)
+    f1 = f1_score(labels, preds)
+
+    # Print metrics
+    print(f"Accuracy:  {acc:.4f}")
+    print(f"Precision: {precision:.4f}")
+    print(f"Recall:    {recall:.4f}")
+    print(f"F1-score:  {f1:.4f}")
+
+    # Plot confusion matrix
     cm = confusion_matrix(labels, preds)
     sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
                 xticklabels=["Non-Plagiarized", "Plagiarized"],
@@ -150,7 +161,6 @@ def evaluate_saved_model(model_path: str):
     plt.savefig("images/confusion_matrix.png")
     plt.show()
     plt.close()
-
 
 def train_and_evaluate_model():
     train_path = get_project_path("matrix_data", "train")
@@ -204,27 +214,29 @@ if __name__ == "__main__":
     # preprocess_and_split_ast_data()
     # augment_data_directory()
 
-    train_path = get_project_path("matrix_data", "train")
-    val_path = get_project_path("matrix_data", "validation")
-    test_path = get_project_path("matrix_data", "test")
+    # train_path = get_project_path("matrix_data", "train")
+    # val_path = get_project_path("matrix_data", "validation")
+    # test_path = get_project_path("matrix_data", "test")
 
-    train_features, train_labels = load_dataset(train_path)
-    val_features, val_labels = load_dataset(val_path)
-    test_features, test_labels = load_dataset(test_path)
+    # train_features, train_labels = load_dataset(train_path)
+    # val_features, val_labels = load_dataset(val_path)
+    # test_features, test_labels = load_dataset(test_path)
 
-    train_inputs = prepare_model_inputs(train_features)
-    val_inputs = prepare_model_inputs(val_features)
-    test_inputs = prepare_model_inputs(test_features)
+    # train_inputs = prepare_model_inputs(train_features)
+    # val_inputs = prepare_model_inputs(val_features)
+    # test_inputs = prepare_model_inputs(test_features)
 
-    print("Building AST embedding model...")
-    ast_model = ast_embedding("ast")
-    _ = ast_model(train_inputs)
+    # print("Building AST embedding model...")
+    # ast_model = ast_embedding("ast")
+    # _ = ast_model(train_inputs)
 
-    print("Training with dense model and random search...")
-    best_model, best_params = train_dense_ast_random_search(
-        ast_model, train_inputs, train_labels, val_inputs, val_labels, n_trials=10
-    )
-    best_model.save("best_ast_dense_model.keras")
+    # print("Training with dense model and random search...")
+    # best_model, best_params = train_dense_ast_random_search(
+    #     ast_model, train_inputs, train_labels, val_inputs, val_labels, n_trials=10
+    # )
+    # best_model.save("best_ast_dense_model.keras")
+
+    # train_and_evaluate_model()
 
     print("Evaluating on test set...")
-    evaluate_saved_model("best_ast_dense_model.keras")
+    evaluate_saved_model("best_ast_dense_modelV4.keras")

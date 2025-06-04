@@ -96,7 +96,7 @@ def binary_plagiarism_code_prediction(
         kernel_regularizer=keras.regularizers.l2(0.0002)
     )(x)
     x = keras.layers.Activation('relu')(x)
-    x = keras.layers.Dropout(0.2)(x)
+    x = keras.layers.Dropout(0.3)(x)
 
     # Dense Layer 3
     x = keras.layers.Dense(

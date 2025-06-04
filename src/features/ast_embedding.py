@@ -97,11 +97,6 @@ def ast_embedding(
     x = keras.layers.MaxPooling1D(pool_size=2, padding="same")(x)
     x = keras.layers.Dropout(0.45)(x) # Increased dropout
 
-    x = keras.layers.GRU(96, return_sequences=True, # Reduced GRU units
-                         kernel_regularizer=keras.regularizers.l2(l2_reg),
-                         recurrent_regularizer=keras.regularizers.l2(l2_reg) # Added recurrent regularization
-                        )(x)
-    x = keras.layers.Dropout(0.4)(x) # Increased dropout
 
     return keras.Model(
         inputs=[depth, children_count, is_leaf, type_id, token_id],
