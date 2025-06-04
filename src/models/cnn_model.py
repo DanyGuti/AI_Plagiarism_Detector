@@ -27,16 +27,23 @@ def load_folder_data(folder_path: str, case_folder: str) -> tuple[list[dict], li
             "token_ids": [],
             "depth": [],
             "children_count": [],
-            "is_leaf": []
+            "is_leaf": [],
+            "token_length": [],
+            "token_is_keyword": [],
+            "sibling_index": []
         }
 
         for line in lines:
-            t_id, tok_id, d, ch, leaf = map(int, line.strip().split())
+         
+            t_id, tok_id, d, ch, leaf, tok_len, tok_is_kw, sib_idx = map(int, line.strip().split())
             sample["type_ids"].append(t_id)
             sample["token_ids"].append(tok_id)
             sample["depth"].append(d)
             sample["children_count"].append(ch)
             sample["is_leaf"].append(leaf)
+            sample["token_length"].append(tok_len)
+            sample["token_is_keyword"].append(tok_is_kw)
+            sample["sibling_index"].append(sib_idx)
 
         # Convert to numpy arrays
         for key in sample:
@@ -59,10 +66,7 @@ def prepare_model_inputs(features: dict[str, np.ndarray], name_prefix="ast") -> 
     }
 
 
-from sklearn.utils.class_weight import compute_class_weight
-from sklearn.metrics import recall_score
-from tensorflow import keras
-import numpy as np
+
 
 def binary_plagiarism_code_prediction(
     embedding_model: keras.Model,
@@ -74,40 +78,53 @@ def binary_plagiarism_code_prediction(
     """Create, train, and evaluate a binary classification CNN model with class weighting and batch normalization."""
 
     x = keras.layers.GlobalAveragePooling1D()(embedding_model.output)
-    x = keras.layers.Dense(128, kernel_initializer='he_normal', kernel_regularizer=keras.regularizers.l2(0.002))(x)
+
+    # Dense Layer 1
+    x = keras.layers.Dense(
+        256,
+        kernel_initializer='he_normal',
+        kernel_regularizer=keras.regularizers.l2(0.0002)
+    )(x)
     x = keras.layers.BatchNormalization()(x)
     x = keras.layers.Activation('relu')(x)
-    x = keras.layers.Dropout(0.4)(x)
+    x = keras.layers.Dropout(0.2)(x)
 
-    x = keras.layers.Dense(64, kernel_initializer='he_normal', kernel_regularizer=keras.regularizers.l2(0.002))(x)
+    # Dense Layer 2
+    x = keras.layers.Dense(
+        64,
+        kernel_initializer='he_normal',
+        kernel_regularizer=keras.regularizers.l2(0.0002)
+    )(x)
     x = keras.layers.Activation('relu')(x)
-    x = keras.layers.Dropout(0.3)(x)
+    x = keras.layers.Dropout(0.2)(x)
 
-    x = keras.layers.Dense(32, kernel_initializer='he_normal', kernel_regularizer=keras.regularizers.l2(0.002))(x)
+    # Dense Layer 3
+    x = keras.layers.Dense(
+        16,
+        kernel_initializer='he_normal',
+        kernel_regularizer=keras.regularizers.l2(0.0002)
+    )(x)
     x = keras.layers.Activation('relu')(x)
 
+    # Output Layer
     output = keras.layers.Dense(1, activation="sigmoid", name="output")(x)
-    model = keras.Model(inputs=embedding_model.input, outputs=output)
 
-    model.compile(optimizer=keras.optimizers.Adam(learning_rate=1e-4),
-                  loss='binary_crossentropy',
-                  metrics=['accuracy'])
+    # Build and compile model
+    model = keras.Model(inputs=embedding_model.input, outputs=output)
+    model.compile(
+        optimizer=keras.optimizers.Adam(learning_rate=1e-4),
+        loss='binary_crossentropy',
+        metrics=['accuracy']
+    )
     model.summary()
 
-    model_checkpoint = keras.callbacks.ModelCheckpoint(
-        "ast_cnn_model.keras",
-        monitor='val_accuracy',
-        save_best_only=True,
-        mode='max',
-        verbose=1
-    )
+    # Compute class weights
+    class_weights = compute_class_weight(class_weight="balanced", classes=np.unique(labels), y=labels)
+    class_weight_dict = {i: class_weights[i] for i in range(len(class_weights))}
 
-    class_weights = compute_class_weight(
-        class_weight='balanced',
-        classes=np.unique(labels),
-        y=labels
-    )
-    class_weight_dict = {i: w for i, w in enumerate(class_weights)}
+    callbacks = [
+        keras.callbacks.ModelCheckpoint("ast_cnn_model.keras", monitor='val_accuracy', save_best_only=True, mode='max', verbose=1),
+    ]
 
     history = model.fit(
         x=input_data,
@@ -115,8 +132,8 @@ def binary_plagiarism_code_prediction(
         epochs=50,
         validation_data=val_data,
         batch_size=32,
-        callbacks=[model_checkpoint],
-        class_weight=class_weight_dict
+        class_weight=class_weight_dict,
+        callbacks=callbacks
     )
 
     model.save("ast_cnn_model.keras")
@@ -127,6 +144,7 @@ def binary_plagiarism_code_prediction(
         print(f"Test Loss: {test_loss}, Test Accuracy: {test_acc}")
 
     return model
+
 
 
 def plot_history(history: keras.callbacks.History, save: bool = False, prefix: str = "training_plot"):
