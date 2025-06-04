@@ -14,7 +14,6 @@ import seaborn as sns
 from collections import Counter
 from pathlib import Path
 from sklearn.metrics import classification_report, confusion_matrix
-from sklearn.model_selection import train_test_split
 from sklearn.utils.class_weight import compute_class_weight
 import tensorflow as tf
 from tensorflow import keras
@@ -64,19 +63,6 @@ def load_dataset(base_path: str):
         all_samples[key] = keras.preprocessing.sequence.pad_sequences(all_samples[key], padding="post", maxlen=700)
 
     return all_samples, np.array(all_labels)
-
-
-def balance_dataset(samples: dict, labels: np.ndarray):
-    indices_1, indices_0 = np.where(labels == 1)[0], np.where(labels == 0)[0]
-    if len(indices_1) == 0 or len(indices_0) == 0:
-        raise ValueError("One of the classes has zero samples. Cannot balance.")
-
-    n = min(len(indices_1), len(indices_0))
-    selected = np.random.choice(indices_1, size=n, replace=False).tolist() + \
-               np.random.choice(indices_0, size=n, replace=False).tolist()
-    np.random.shuffle(selected)
-
-    return {k: v[selected] for k, v in samples.items()}, labels[selected]
 
 
 def build_dense_ast_model(embedding_model, params):
@@ -214,6 +200,7 @@ def train_and_evaluate_model():
 if __name__ == "__main__":
     print("Starting plagiarism detection pipeline...")
 
+    # Optional: run these once to prepare the dataset
     # preprocess_and_split_ast_data()
     # augment_data_directory()
 
@@ -229,14 +216,15 @@ if __name__ == "__main__":
     val_inputs = prepare_model_inputs(val_features)
     test_inputs = prepare_model_inputs(test_features)
 
-    # Train and search best dense model
-    # ast_model = ast_embedding("ast")
-    # _ = ast_model(train_inputs)
-    # best_model, best_params = train_dense_ast_random_search(
-    #     ast_model, train_inputs, train_labels, val_inputs, val_labels, n_trials=10
-    # )
-    # best_model.save("best_ast_cnn_model.keras")
+    print("Building AST embedding model...")
+    ast_model = ast_embedding("ast")
+    _ = ast_model(train_inputs)
 
-    train_and_evaluate_model()
+    print("Training with dense model and random search...")
+    best_model, best_params = train_dense_ast_random_search(
+        ast_model, train_inputs, train_labels, val_inputs, val_labels, n_trials=10
+    )
+    best_model.save("best_ast_dense_model.keras")
 
-    # evaluate_saved_model(model_path="best_ast_cnn_modelV3.keras")
+    print("Evaluating on test set...")
+    evaluate_saved_model("best_ast_dense_model.keras")

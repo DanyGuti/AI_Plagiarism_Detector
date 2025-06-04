@@ -1,118 +1,87 @@
-'''
-AST embedding module
-This module contains functions to traverse the AST (Abstract Syntax Tree)
-and extract features from it.
-'''
+# Full traverse_ast.py — Enhanced AST parsing and encoding
 import json
 from typing import Union, List, Optional, TypedDict
-from sklearn.preprocessing import LabelEncoder
 import numpy as np
+from sklearn.preprocessing import LabelEncoder
 
-# Define a TypedDict for the AST node
 class ASTNode(TypedDict):
-    '''ASTNode class
-        This class represents a node in the Abstract Syntax Tree (AST).
-        to store the type, text, name, and children of the node.
-    '''
     type: str
-    token: str
+    token: Optional[str]
     text: Optional[str]
     name: Optional[str]
     children: Union[List['ASTNode'], 'ASTNode']
 
-# Process AST nodes, to convert into a matrix embedding
-def traverse_ast(
-    node: ASTNode,
-    depth=0,
-    features=None
-) -> list[dict[str,int|str|bool]]:
-    '''
-    Recursively traverse the AST and extract features.
-    Args:
-        node (dict): The AST node to process.
-        depth (int): The current depth in the AST.
-        features (list): The list to store features.
-    Returns:
-        list[dict[str,int|str|bool]]: A list of features extracted from the AST.
-    '''
+JAVA_KEYWORDS = {
+    "abstract", "assert", "boolean", "break", "byte", "case", "catch", "char",
+    "class", "const", "continue", "default", "do", "double", "else", "enum",
+    "extends", "final", "finally", "float", "for", "goto", "if", "implements",
+    "import", "instanceof", "int", "interface", "long", "native", "new",
+    "package", "private", "protected", "public", "return", "short", "static",
+    "strictfp", "super", "switch", "synchronized", "this", "throw", "throws",
+    "transient", "try", "void", "volatile", "while", "var", "record", "sealed",
+    "permits", "non-sealed", "yield"
+}
+
+def traverse_ast(node: ASTNode, depth=0, features=None, parent=None, sibling_index=0, num_siblings=0):
     if features is None:
         features = []
     if not isinstance(node, dict):
         return features
-    node_type = node.get("type", "UNK")
-    token = node.get("token") or node.get("value") or node.get("text") or None
-    children = node.get("children", [])
 
-    # Normalize children to a list
+    node_type = node.get("type", "UNK")
+    token = node.get("token") or node.get("value") or node.get("text") or ""
+
+    children = node.get("children", [])
     if isinstance(children, dict):
         children = [children]
     elif not isinstance(children, list):
         children = []
 
-    # Save the features for the current node
-    # Probably need the feature of tracking the path from the root to the leaf
     features.append({
         "type": node_type,
         "token": token,
         "depth": depth,
         "children_count": len(children),
         "is_leaf": len(children) == 0,
+        "token_length": len(token),
+        "token_is_keyword": token in JAVA_KEYWORDS,
+        "sibling_index": sibling_index,
+        "num_siblings": num_siblings,
     })
 
-    for child in children:
-        traverse_ast(child, depth + 1, features)
+    for idx, child in enumerate(children):
+        traverse_ast(child, depth + 1, features, node, idx, len(children))
     return features
 
+def read_ast_from_file(file_path: str):
+    with open(file_path, 'r', encoding='utf-8') as f:
+        return json.load(f)
 
-def read_ast_from_file(
-    file_path: str
-) -> dict:
-    '''
-    Read the AST from a JSON file.
-    Args:
-        file_path (str): The path to the JSON file.
-        Returns:
-        dict: The AST data.
-    '''
-    with open(file_path, 'r') as f:
+def encode_features(features, max_nodes=500):
+    all_types = [f["type"] for f in features]
+    all_tokens = [f["token"] or "ε" for f in features]
 
-        ast_data = json.load(f)
-    return ast_data
-
-def encode_features(
-    features: list[dict[str, int|str|bool]]
-) -> list[dict[str, int]]:
-    '''
-    Encode the features into a matrix.
-    Args:
-        features (list): The list of features to encode.
-    Returns:
-        np.array: The encoded features as a matrix.
-    '''
     type_encoder = LabelEncoder()
     token_encoder = LabelEncoder()
+    type_ids = type_encoder.fit_transform(all_types)
+    token_ids = token_encoder.fit_transform(all_tokens)
 
-    all_types = [feature["type"] for feature in features]
-    all_tokens = [feature["token"] or "ε" for feature in features]
+    matrix = np.zeros((len(features), 8), dtype=int)
 
-    type_encoder.fit(all_types)
-    token_encoder.fit(all_tokens)
-
-    type_ids = type_encoder.transform(all_types)
-    token_ids = token_encoder.transform(all_tokens)
-
-    # Each node will have 5 features:
-    # 1. Type ID encoded
-    # 2. Token from terminal nodes encoded
-    # 3. Depth
-    # 4. Number of children
-    # 5. Is leaf (1 if leaf, 0 otherwise)
-    matrix = np.zeros((len(features), 5), dtype=int)
     for i, feature in enumerate(features):
         matrix[i, 0] = type_ids[i]
         matrix[i, 1] = token_ids[i]
         matrix[i, 2] = feature["depth"]
         matrix[i, 3] = feature["children_count"]
         matrix[i, 4] = int(feature["is_leaf"])
+        matrix[i, 5] = feature["token_length"]
+        matrix[i, 6] = int(feature["token_is_keyword"])
+        matrix[i, 7] = feature["sibling_index"]
+
+    if len(matrix) > max_nodes:
+        matrix = matrix[:max_nodes]
+    elif len(matrix) < max_nodes:
+        pad = np.zeros((max_nodes - len(matrix), matrix.shape[1]), dtype=int)
+        matrix = np.vstack((matrix, pad))
 
     return matrix
