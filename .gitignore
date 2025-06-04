@@ -26,6 +26,20 @@ pip-wheel-metadata/
 # ====================
 # ANTLR (Gen. Files)
 # ====================
+/data/
+/matrix_data/
+/ast_data/
+/conplag/
+
+data/
+matrix_data/
+ast_data/
+conplag/
+
+data
+matrix_data
+ast_data
+conplag
 
 
 # Keep grammars

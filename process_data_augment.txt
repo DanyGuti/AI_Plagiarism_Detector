@@ -1,0 +1,6 @@
+# 1. Get the column of the problem, sort the indexes, start at max index + 1, make new dirs in data/cases case-0{i}
+# 2. Create two classifications/folders plagiarized non-plagiarized
+# 3. Point to the first problem (based on sorted), access both the index hashes (from the current
+    # row pair of hashes), point to version_1 or version_2
+    # (by splitting all of the folders inside folder.iterdir(), can be in first or second index)
+    # where the hash is, extract the code, and write it into depending if column in verdict is 0 or 1 folder

@@ -75,9 +75,12 @@ class JavaParserVisitorImpl(JParserVisitor):
             "children": self.visitChildren(ctx)
         }
     def visitTerminal(self, node):
+        token_type = node.getSymbol().type
+        token_name = Java20Parser.symbolicNames[token_type]
         return {
             "type": "Terminal",
-            "text": node.getText()
+            "text": node.getText(),
+            "token": token_name,
         }
 
     def visitChildren(self, node):
@@ -87,20 +90,17 @@ class JavaParserVisitorImpl(JParserVisitor):
         results: list = []
         for child in node.getChildren():
             if isinstance(child, TerminalNode):
-                results.append({
-                    "type": "Terminal",
-                    "text": child.getText()
-                })
+                ast = self.visitTerminal(child)
             else:
                 ast = child.accept(self)
-                if ast is not None:
-                    results.append(ast)
+            if ast is not None:
+                results.append(ast)
         if hasattr(node, "getText"):
             rule_index = node.getRuleIndex()
             rule_name = Java20Parser.ruleNames[rule_index]
-            return {    
+            return {
                 "type": rule_name,
                 "text": node.getText(),
-                "children": results
+                "children": results,
             }
         return results
