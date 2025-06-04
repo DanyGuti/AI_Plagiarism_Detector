@@ -3,16 +3,16 @@ Main module
 Preprocess data, create AST embeddings and train
 a CNN model for binary plagiarism detection in code.
 Based on research paper:
-Plagiarism Detection in Source Code using Machine Learning.
+"Plagiarism Detection in Source Code using Machine Learning."
 """
 
 import os
-import numpy as np
 import random
-import matplotlib.pyplot as plt
-import seaborn as sns
 from collections import Counter
 from pathlib import Path
+import seaborn as sns
+import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.utils.class_weight import compute_class_weight
 import tensorflow as tf
@@ -32,14 +32,26 @@ from models.cnn_model import (
 )
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 
+# Constant representing the cases to be processed
 CASES = [f"case-0{i}" for i in range(1, 29)]
 
 
 def get_project_path(*parts) -> str:
+    '''
+    Constructs a path relative to the project root directory.
+    Args:
+        *parts: Variable length argument list of path components.
+    Returns:
+        str: The constructed path.
+    '''
     return os.path.join(os.getcwd(), "..", *parts)
 
 
 def preprocess_and_split_ast_data():
+    '''
+    Preprocesses the AST data by generating JSON nodes and matrix data,
+    and then splits the data into training, validation, and test sets.
+    '''
     print("Generating AST JSON nodes and matrix data...")
     source_path = get_project_path("data", "cases")
     output_path = get_project_path("ast_data")
@@ -50,6 +62,16 @@ def preprocess_and_split_ast_data():
 
 
 def load_dataset(base_path: str):
+    '''
+    Loads the dataset from the specified base path.
+    Args:
+        base_path (str): The base path where the dataset is located.
+    Returns:
+        tuple: A tuple containing:
+        - all_samples (dict): A dictionary with keys "type_ids", "token_ids", "depth", "children_count", "is_leaf",
+            each containing a list of corresponding values.
+        - all_labels (np.array): An array of labels for the samples.
+    '''
     all_samples = {k: [] for k in ["type_ids", "token_ids", "depth", "children_count", "is_leaf"]}
     all_labels = []
 
@@ -67,10 +89,19 @@ def load_dataset(base_path: str):
 
 
 def build_dense_ast_model(embedding_model, params):
+    '''
+    Builds a dense model for AST embeddings with specified parameters.
+    Args:
+        embedding_model (keras.Model): The pre-trained AST embedding model.
+        params (dict): A dictionary containing hyperparameters for the model.
+    Returns:
+        keras.Model: The compiled dense model.
+    '''
     x = keras.layers.GlobalAveragePooling1D()(embedding_model.output)
     for i in range(1, 4):
-        x = keras.layers.Dense(params[f'dense{i}'], kernel_initializer='he_normal',
-                               kernel_regularizer=keras.regularizers.l2(params['l2']))(x)
+        x = keras.layers.Dense(
+            params[f'dense{i}'], kernel_initializer='he_normal',
+            kernel_regularizer=keras.regularizers.l2(params['l2']))(x)
         x = keras.layers.Activation('relu')(x)
         if i < 3:
             x = keras.layers.Dropout(params[f'dropout{i}'])(x)
@@ -83,6 +114,19 @@ def build_dense_ast_model(embedding_model, params):
 
 def train_dense_ast_random_search(embedding_model, train_inputs, train_labels,
                                    val_inputs, val_labels, n_trials=10):
+    '''
+    Trains a dense model using random search for hyperparameter optimization.
+    Args:
+        embedding_model (keras.Model): The pre-trained AST embedding model.
+        train_inputs (dict): The training inputs for the model.
+        train_labels (np.array): The labels for the training data.
+        val_inputs (dict): The validation inputs for the model.
+        val_labels (np.array): The labels for the validation data.
+        n_trials (int): The number of trials for random search.
+    Returns:
+        tuple: A tuple containing:
+        - best_model (keras.Model): The best model found during the search.
+        - best_params (dict): The hyperparameters of the best model.'''
     best_model, best_val_acc, best_params = None, 0.0, None
     class_weights = compute_class_weight('balanced', classes=np.unique(train_labels), y=train_labels)
     cw = {i: w for i, w in enumerate(class_weights)}
@@ -117,6 +161,15 @@ def train_dense_ast_random_search(embedding_model, train_inputs, train_labels,
 
 
 def plot_history(history, save=False, prefix="plot"):
+    '''
+    Plots the training history of a model.
+    Args:
+        history (keras.callbacks.History): The training history of the model.
+        save (bool): Whether to save the plots to files.
+        prefix (str): Prefix for the saved plot filenames.
+    Returns:
+        None
+    '''
     os.makedirs("images", exist_ok=True)
     for metric in ["accuracy", "loss"]:
         plt.figure()
@@ -131,6 +184,13 @@ def plot_history(history, save=False, prefix="plot"):
         plt.close()
 
 def evaluate_saved_model(model_path: str):
+    '''
+    Evaluates a saved model on the test dataset and prints metrics.
+    Args:
+        model_path (str): The path to the saved model.
+    Returns:
+        None
+    '''
     test_path = get_project_path("matrix_data", "test")
     features, labels = load_dataset(test_path)
     inputs = prepare_model_inputs(features)
@@ -163,6 +223,12 @@ def evaluate_saved_model(model_path: str):
     plt.close()
 
 def train_and_evaluate_model():
+    '''
+    Trains a CNN model for binary plagiarism detection using AST embeddings,
+    evaluates it on the test set, and saves the model.
+    Returns:
+        None
+    '''
     train_path = get_project_path("matrix_data", "train")
     val_path = get_project_path("matrix_data", "validation")
     test_path = get_project_path("matrix_data", "test")
