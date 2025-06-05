@@ -99,6 +99,10 @@
 ### Pasos
 1. Descarga de requerimientos, posicionamiento en directorio root del proyecto, ejecutar desde la terminal o línea de comandos: `pip install -r requirements.txt `
 2. Posicionar datasets en directorio raíz del proyecto
-3. Pipeline completo de modelo de Inteligencia Artificial: Ir al file: `/src/main.py`, descomentar las funciones "import" del archivo "train", descomentar las siguientes líneas de código en el siguiente rango [31,56]
-4. Ejecutar módulo main desde la terminal o línea de comandos: `python3 main.py`
+3. Pipeline completo de modelo de Inteligencia Artificial: Ir al file: `/src/main.py`, descomentar las funciones "import" del archivo "train", descomentar las siguientes líneas de código en el siguiente rango [31,56] dependiendo de la función a utilizar.
+   - train_dense_ast_random_search: para entrenar con hiperparametros aleatorios y obtener el mejor modelo
+   - train_and_evaluate_model: para entrenar el modelo expandido en el archivo de cnn_model
+   - evaluate_saved_model: para evaluar un modelo en especifico y generar una matriz de confusión
+
+5. Ejecutar módulo main desde la terminal o línea de comandos: `python3 main.py`
 
