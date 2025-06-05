@@ -1,6 +1,13 @@
+'''
+- AST Embedding Model
+This module defines a Keras model for AST (Abstract Syntax Tree) feature
+extraction with Embedding layers.
+'''
+
 import keras
 import tensorflow as tf
 
+# Constants for AST embedding model
 MAX_LENGTH_NODES = 700
 TYPE_VOCAB_SIZE = 300
 TYPE_EMBEDDING_DIM = 128
@@ -10,6 +17,13 @@ TOKEN_EMBEDDING_DIM = 128
 def ast_embedding(
     name_prefix: str,
 ) -> keras.Model:
+    '''
+    Create an AST embedding model using Keras.
+    Args:
+        name_prefix (str): Prefix for the input names in the model.
+    Returns:
+        keras.Model: A Keras model for AST feature extraction.
+    '''
     depth: keras.KerasTensor = keras.Input(
         shape=(MAX_LENGTH_NODES, 1), name=f"{name_prefix}_depth"
     )
