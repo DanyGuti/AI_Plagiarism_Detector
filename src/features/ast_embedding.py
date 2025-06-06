@@ -9,9 +9,9 @@ import tensorflow as tf
 
 # Constants for AST embedding model
 MAX_LENGTH_NODES = 700
-TYPE_VOCAB_SIZE = 300
+TYPE_VOCAB_SIZE = 700
 TYPE_EMBEDDING_DIM = 128
-TOKEN_VOCAB_SIZE = 300
+TOKEN_VOCAB_SIZE = 700
 TOKEN_EMBEDDING_DIM = 128
 
 def ast_embedding(

@@ -30,11 +30,15 @@ pip-wheel-metadata/
 /matrix_data/
 /ast_data/
 /conplag/
+/cases_lexer/
+/embed_data/
 
 data/
 matrix_data/
 ast_data/
 conplag/
+cases_lexer/
+embed_data/
 
 data
 matrix_data
