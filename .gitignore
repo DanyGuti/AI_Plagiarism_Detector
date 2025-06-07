@@ -39,6 +39,7 @@ ast_data/
 conplag/
 cases_lexer/
 embed_data/
+src/hyperband_results
 
 data
 matrix_data

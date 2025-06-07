@@ -3,10 +3,19 @@
 '''
 from pathlib import Path
 import json
+import os
 import keras
+import keras_tuner as kt
+import random
+import uuid
+from matplotlib import pyplot as plt
 import numpy as np
+import seaborn as sns
+from sklearn.metrics import \
+    accuracy_score, precision_score, recall_score, f1_score,\
+    confusion_matrix
 from sklearn.utils.class_weight import compute_class_weight
-
+from train import get_project_path, load_dataset, prepare_model_inputs
 from models.cnn_model import plot_history
 
 CASES = [f"case-0{i}" for i in range(1, 29)]
@@ -73,9 +82,26 @@ def build_token_lstm_model(
         )
     )(tokens_input)
     x = keras.layers.Dense(
+        128,
+        name='dense_layer',
+        kernel_initializer='he_normal',
+        kernel_regularizer=keras.regularizers.l2(0.002),
+        activation='relu'
+    )(x)
+    x = keras.layers.Dropout(0.3)(x)
+    x = keras.layers.Dense(
         64,
-        activation='relu',
-        name='dense_layer'
+        name='dense_layer_2',
+        kernel_initializer='he_normal',
+        kernel_regularizer=keras.regularizers.l2(0.002),
+        activation='relu'
+    )(x)
+    x = keras.layers.Dense(
+        32,
+        name='dense_layer_3',
+        kernel_initializer='he_normal',
+        kernel_regularizer=keras.regularizers.l2(0.002),
+        activation='relu'
     )(x)
     return keras.Model(
         inputs=tokens_input,
@@ -90,31 +116,32 @@ def train_full_model(
     input_data: dict[str, np.ndarray],
     val_data: tuple[dict[str, np.ndarray], dict[str, np.ndarray]],
     test_data: dict[str, np.ndarray],
+    name_model: str
 ):
     x_ast = keras.layers.GlobalAveragePooling1D()(embedding_model.output)
     x_lstm = lstm_model.output
     x = keras.layers.Concatenate()([x_ast, x_lstm])
     x = keras.layers.Dense(
-        256,
+        128,
         kernel_initializer='he_normal',
         kernel_regularizer=keras.regularizers.l2(0.0002)
     )(x)
     x = keras.layers.BatchNormalization()(x)
     x = keras.layers.Activation('relu')(x)
     x = keras.layers.Dropout(0.2)(x)
-    x = keras.layers.Dense(
-        64,
-        kernel_initializer='he_normal',
-        kernel_regularizer=keras.regularizers.l2(0.0002)
-    )(x)
-    x = keras.layers.Activation('relu')(x)
-    x = keras.layers.Dropout(0.3)(x)
-    x = keras.layers.Dense(
-        16,
-        kernel_initializer='he_normal',
-        kernel_regularizer=keras.regularizers.l2(0.0002)
-    )(x)
-    x = keras.layers.Activation('relu')(x)
+    # x = keras.layers.Dense(
+    #     64,
+    #     kernel_initializer='he_normal',
+    #     kernel_regularizer=keras.regularizers.l2(0.0002)
+    # )(x)
+    # x = keras.layers.Activation('relu')(x)
+    # x = keras.layers.Dropout(0.3)(x)
+    # x = keras.layers.Dense(
+    #     16,
+    #     kernel_initializer='he_normal',
+    #     kernel_regularizer=keras.regularizers.l2(0.0002)
+    # )(x)
+    # x = keras.layers.Activation('relu')(x)
     output = keras.layers.Dense(1, activation="sigmoid", name="output")(x)
     for i, input_tensor in enumerate(embedding_model.inputs):
         print(f"Input {i}: {input_tensor.name}, shape={input_tensor.shape}")
@@ -162,7 +189,287 @@ def train_full_model(
         class_weight=class_weight_dict,
         callbacks=callbacks
     )
-    model.save("full_lstm_ast_cnn_model.keras")
+    model.save(f"{name_model}.keras")
     plot_history(history, "full_model_training_history")
 
     return model
+
+def evaluate_full_model(
+    model_path: str,
+    test_path: str,
+    test_lstm_path: str,
+):
+    test_sequences, test_labels = load_embeddings_and_labels(
+        split_dir="test",
+        base_dir=test_lstm_path,
+    )
+    test_padded = padding_embeddings(test_sequences, max_length=700)
+    test_features, test_labels = load_dataset(test_path)
+    test_features = prepare_model_inputs(test_features)
+
+    test_inputs = {
+        "tokens_input": test_padded,
+        **test_features,
+    }
+    print("Inspecting test input shapes:")
+    for key, value in test_inputs.items():
+        print(f"{key}: shape = {value.shape}, dtype = {value.dtype}")
+    # Load the best model
+    model: keras.Model = keras.models.load_model(model_path)
+    model.summary()
+    preds = (model.predict(test_inputs) > 0.4).astype(int)
+
+    # Compute metrics
+    accuracy = accuracy_score(test_labels, preds)
+    precision = precision_score(test_labels, preds)
+    recall = recall_score(test_labels, preds)
+    f1 = f1_score(test_labels, preds)
+
+    # Print metrics
+    print(f"Accuracy: {accuracy:.4f}")
+    print(f"Precision: {precision:.4f}")
+    print(f"Recall: {recall:.4f}")
+    print(f"F1 Score: {f1:.4f}")
+
+    # Plot CM
+    cm = confusion_matrix(test_labels, preds)
+
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
+                xticklabels=["Non-Plagiarized", "Plagiarized"],
+                yticklabels=["Non-Plagiarized", "Plagiarized"])
+    plt.title("Confusion Matrix")
+    plt.xlabel("Predicted")
+    plt.ylabel("Actual")
+    os.makedirs("images", exist_ok=True)
+    plt.savefig("images/confusion_matrix.png")
+    plt.show()
+    plt.close()
+
+    loss, accuracy = model.evaluate(test_inputs, test_labels)
+    print(f"Test Loss: {loss}, Test Accuracy: {accuracy}")
+
+
+def build_dense_ast_lstm_model(
+    embedding_model: keras.Model,
+    lstm_model: keras.Model,
+    params: dict[str, int]
+) -> keras.Model:
+    '''
+    Builds a dense model for AST embeddings and LSTM embeddings with specified parameters.
+    Args:
+        embedding_model (keras.Model): The pre-trained AST embedding model.
+        lstm_model (keras.Model): The pre-trained LSTM model for token embeddings.
+        params (dict): A dictionary containing hyperparameters for the model.
+    Returns:
+        keras.Model: The compiled dense model.
+    '''
+    x_ast = keras.layers.GlobalAveragePooling1D()(embedding_model.output)
+    x_lstm = lstm_model.output
+    x = keras.layers.Concatenate()([x_ast, x_lstm])
+    for i in range(1, 4):
+        x = keras.layers.Dense(
+            params[f'dense{i}'], kernel_initializer='he_normal',
+            kernel_regularizer=keras.regularizers.l2(params['l2']))(x)
+        x = keras.layers.Activation('relu')(x)
+        if i < 3:
+            x = keras.layers.Dropout(params[f'dropout{i}'])(x)
+    output = keras.layers.Dense(1, activation="sigmoid", name="output")(x)
+    model = keras.Model(inputs={
+        "tokens_input": lstm_model.input,
+        "ast_type_id": embedding_model.input[3],
+        "ast_token_id": embedding_model.input[4],
+        "ast_depth": embedding_model.input[0],
+        "ast_children_count": embedding_model.input[1],
+        "ast_is_leaf": embedding_model.input[2],
+    },
+    outputs=output)
+    model.compile(optimizer=keras.optimizers.Adam(learning_rate=params['lr']),
+                  loss='binary_crossentropy', metrics=['accuracy'])
+    return model
+
+
+def train_dense_ast_lstm_random_search(
+    embedding_model: keras.Model,
+    lstm_model: keras.Model,
+    train_inputs: dict[str, list],
+    train_labels: np.array,
+    val_inputs: dict[str, list],
+    val_labels: np.array,
+    n_trials=10
+) -> tuple[keras.Model, dict]:
+    '''
+    Trains a dense model using random search for hyperparameter optimization.
+    Args:
+        embedding_model (keras.Model): The pre-trained AST embedding model.
+        lstm_model (keras.Model): The pre-trained LSTM model for token embeddings.
+        train_inputs (dict): The training inputs for the model.
+        train_labels (np.array): The labels for the training data.
+        val_inputs (dict): The validation inputs for the model.
+        val_labels (np.array): The labels for the validation data.
+        n_trials (int): The number of trials for random search.
+    Returns:
+        tuple: A tuple containing:
+        - best_model (keras.Model): The best model found during the search.
+        - best_params (dict): The hyperparameters of the best model.
+    '''
+    best_model, best_val_acc, best_params = None, 0.0, None
+    class_weights = compute_class_weight(
+        'balanced', classes=np.unique(train_labels), y=train_labels
+    )
+    cw = {i: w for i, w in enumerate(class_weights)}
+
+    for trial in range(n_trials):
+        params = {
+            'dense1': random.choice([64, 128, 256]),
+            'dense2': random.choice([32, 64, 128]),
+            'dense3': random.choice([16, 32, 64]),
+            'dropout1': random.choice([0.2, 0.3, 0.4]),
+            'dropout2': random.choice([0.2, 0.3, 0.4]),
+            'l2': random.choice([1e-4, 5e-4, 1e-3]),
+            'lr': random.choice([1e-4, 5e-4, 1e-3])
+        }
+        print(f"\n🔎 Trial {trial+1}/{n_trials} | Params: {params}")
+        model = build_dense_ast_lstm_model(embedding_model, lstm_model, params)
+        early_stop = keras.callbacks.EarlyStopping(
+            monitor="val_loss",
+            patience=10,
+            restore_best_weights=True
+        )
+
+        history = model.fit(
+            train_inputs, train_labels, validation_data=(val_inputs, val_labels),
+            epochs=50, batch_size=32, class_weight=cw, callbacks=[early_stop], verbose=2
+        )
+
+        val_acc = max(history.history["val_accuracy"])
+        print(f"Val Accuracy: {val_acc:.4f}")
+
+        if val_acc > best_val_acc:
+            best_val_acc, best_model, best_params = val_acc, model, params
+            plot_history(history, save=True, prefix=f"best_model_trial_{trial+1}")
+
+    print(f"\nBest Val Accuracy: {best_val_acc:.4f}\n Best Hyperparameters: {best_params}")
+    best_model.save("best_dense_ast_model.keras")
+    return best_model, best_params
+
+def build_dense_ast_lstm_model_tuner(
+    hp: kt.HyperParameters,
+    embedding_model: keras.Model,
+    lstm_model: keras.Model
+) -> keras.Model:
+    '''
+    Builds a dense model for AST embeddings and LSTM embeddings with hyperparameters from Keras Tuner.
+    Args:
+        hp (kt.HyperParameters): The hyperparameters from Keras Tuner.
+        embedding_model (keras.Model): The pre-trained AST embedding model.
+        lstm_model (keras.Model): The pre-trained LSTM model for token embeddings.
+    Returns:
+        keras.Model: The compiled dense model.
+    '''
+
+    x_ast = keras.layers.GlobalAveragePooling1D(name="global_avg_pool_ast")(embedding_model.output)
+    x_lstm = lstm_model.output
+    x = keras.layers.Concatenate(name="concat_dense_ast_lstm")([x_ast, x_lstm])
+    unique_id = str(uuid.uuid4())
+    for i in range(1, 4):
+        x = keras.layers.Dense(
+            hp.Int(f'dense{i}', min_value=16, max_value=256, step=16),
+            kernel_initializer='he_normal',
+            kernel_regularizer=keras.regularizers.l2(hp.Float('l2', 1e-5, 1e-2, sampling='log')),
+            name=f"dense_{i}_{unique_id}"
+        )(x)
+        x = keras.layers.Activation('relu', name=f"relu_{i}")(x)
+        if i < 3:
+            x = keras.layers.Dropout(hp.Float(f'dropout{i}', 0.2, 0.5, step=0.1), name=f"dropout_{i}_{unique_id}")(x)
+
+    output = keras.layers.Dense(1, activation="sigmoid", name="output")(x)
+
+    model = keras.Model(inputs={
+            "tokens_input": lstm_model.input,
+            "ast_type_id": embedding_model.input[3],
+            "ast_token_id": embedding_model.input[4],
+            "ast_depth": embedding_model.input[0],
+            "ast_children_count": embedding_model.input[1],
+            "ast_is_leaf": embedding_model.input[2],
+        }, outputs=output
+    )
+
+    model.compile(
+        optimizer=keras.optimizers.Adam(learning_rate=hp.Float('lr', 1e-5, 1e-2, sampling='log')),
+        loss='binary_crossentropy',
+        metrics=['accuracy']
+    )
+
+    return model
+
+def train_dense_ast_lstm_hyperband(
+    embedding_model: keras.Model,
+    lstm_model: keras.Model,
+    train_inputs: dict[str, list],
+    train_labels: np.array,
+    val_inputs: dict[str, list],
+    val_labels: np.array,
+    max_epochs=50,
+) -> tuple[keras.Model, dict]:
+    '''
+    Trains a dense model using Hyperband for hyperparameter optimization.
+    Args:
+        embedding_model (keras.Model): The pre-trained AST embedding model.
+        lstm_model (keras.Model): The pre-trained LSTM model for token embeddings.
+        train_inputs (dict): The training inputs for the model.
+        train_labels (np.array): The labels for the training data.
+        val_inputs (dict): The validation inputs for the model.
+        val_labels (np.array): The labels for the validation data.
+        max_epochs (int): The maximum number of epochs to train.
+        factor (int): The reduction factor for Hyperband.
+    Returns:
+        tuple: A tuple containing:
+        - best_model (keras.Model): The best model found during the search.
+        - best_params (dict): The hyperparameters of the best model.
+    '''
+    # Placeholder for Hyperband implementation
+    class_weights = compute_class_weight(
+        'balanced', classes=np.unique(train_labels), y=train_labels
+    )
+    cw = {i: w for i, w in enumerate(class_weights)}
+    def build_model(hp):
+        return build_dense_ast_lstm_model_tuner(hp, embedding_model, lstm_model)
+    tuner = kt.Hyperband(
+        build_model,
+        objective='val_accuracy',
+        max_epochs=max_epochs,
+        factor=3,
+        directory='hyperband_results',
+        project_name='dense_ast_lstm_tuning'
+    )
+    stop_early = keras.callbacks.EarlyStopping(
+        monitor='val_loss',
+        patience=10
+    )
+
+    tuner.search(
+        train_inputs,
+        train_labels,
+        validation_data=(val_inputs, val_labels),
+        epochs=max_epochs,
+        batch_size=32,
+        class_weight=cw,
+        callbacks=[stop_early],
+        verbose=2
+    )
+
+    best_hp = tuner.get_best_hyperparameters(num_trials=1)[0]
+    best_model = tuner.hypermodel.build(best_hp)
+
+    best_model.fit(
+        train_inputs,
+        train_labels,
+        validation_data=(val_inputs, val_labels),
+        epochs=max_epochs,
+        batch_size=32,
+        class_weight=cw,
+        verbose=2
+    )
+
+    best_model.save("best_dense_ast_model_hyperband.keras")
+    return best_model, best_hp.values

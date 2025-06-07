@@ -30,6 +30,9 @@ from train_embedding import (
     padding_embeddings,
     train_full_model,
     build_token_lstm_model,
+    evaluate_full_model,
+    train_dense_ast_lstm_random_search,
+    train_dense_ast_lstm_hyperband
 )
 
 # Uncomment the following lines to enable
@@ -57,20 +60,25 @@ if __name__ == "__main__":
         split_dir="validation",
         base_dir=get_project_path("embed_data"),
     )
+    sequences_test, labels_test = load_embeddings_and_labels(
+        split_dir="test",
+        base_dir=get_project_path("embed_data"),
+    )
     embedded_paddings = padding_embeddings(sequences, max_length=700)
     embedded_paddings_val = padding_embeddings(sequences_val, max_length=700)
+    embedded_paddings_test = padding_embeddings(sequences_test, max_length=700)
     lstm_model = build_token_lstm_model(
         vocab_size=500,
         embedding_dim=128,
         lstm_units=128,
         max_length=700
     )
-    ############################################################
+    # ############################################################
 
-    # Pipeline ran once to prepare the dataset and train the model.
-    # print("Starting plagiarism detection pipeline...")
+    # # Pipeline ran once to prepare the dataset and train the model.
+    # # print("Starting plagiarism detection pipeline...")
 
-    # Optional: run these once to prepare the dataset
+    # # Optional: run these once to prepare the dataset
     # preprocess_and_split_ast_data()
     # augment_data_directory()
 
@@ -86,12 +94,9 @@ if __name__ == "__main__":
     val_inputs = prepare_model_inputs(val_features)
     test_inputs = prepare_model_inputs(test_features)
 
-    print(val_labels, labels_val, token_labels)
-
-    print("Building AST embedding model...")
+    # # print("Building AST embedding model...")
     ast_model = ast_embedding("ast")
     _ = ast_model(train_inputs)
-    print(train_features.keys())
     train_inputs_dict = {
         "tokens_input": embedded_paddings,
         "ast_type_id": train_features["type_ids"],
@@ -108,32 +113,36 @@ if __name__ == "__main__":
         "ast_children_count": val_features["children_count"],
         "ast_is_leaf": val_features["is_leaf"],
     }
-    # assert np.array_equal(
-    #     token_labels, train_labels
-    #     ), "Token and AST train labels should be identical!"
-    # assert np.array_equal(
-    #     labels_val, val_labels
-    #     ), "Token and AST val labels should be identical!"
-
-    train_full_model(
-        embedding_model=ast_model,
-        lstm_model=lstm_model,
-        labels=train_labels,
-        input_data=train_inputs_dict,
-        val_data=(
-            val_inputs_dict,
-            val_labels
-        ),
-        test_data=test_inputs
-    )
-
-    # print("Training with dense model and random search...")
-    # best_model, best_params = train_dense_ast_random_search(
-    #     ast_model, train_inputs, train_labels, val_inputs, val_labels, n_trials=10
+    # train_full_model(
+    #     embedding_model=ast_model,
+    #     lstm_model=lstm_model,
+    #     labels=train_labels,
+    #     input_data=train_inputs_dict,
+    #     val_data=(
+    #         val_inputs_dict,
+    #         val_labels
+    #     ),
+    #     test_data=test_inputs,
+    #     name_model="full_lstm_ast_cnn_modelv2.keras"
     # )
-    # best_model.save("best_ast_dense_model.keras")
+
+    print("Training with dense model and random search...")
+    # best_model, best_params = train_dense_ast_lstm_random_search(
+    #     ast_model, lstm_model, train_inputs_dict, train_labels, val_inputs_dict, val_labels, n_trials=10
+    # )
+    best_model, best_params = train_dense_ast_lstm_hyperband(
+        ast_model, lstm_model, train_inputs_dict, train_labels, val_inputs_dict, val_labels
+    )
+    best_model.save("best_ast_lstm_dense_hp_model.keras")
 
     # train_and_evaluate_model()
 
     # print("Evaluating on test set...")
-    # evaluate_saved_model("best_ast_dense_modelV4.keras")
+    # test_ast_path = get_project_path("matrix_data", "test")
+    # lstm_path = get_project_path("embed_data")
+
+    # evaluate_full_model(
+    #     "full_lstm_ast_cnn_modelv2.keras",
+    #     test_path=test_ast_path,
+    #     test_lstm_path=lstm_path
+    # )
