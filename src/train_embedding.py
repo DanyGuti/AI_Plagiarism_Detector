@@ -8,6 +8,7 @@ import keras
 import keras_tuner as kt
 import random
 import uuid
+import tensorflow as tf
 from matplotlib import pyplot as plt
 import numpy as np
 import seaborn as sns
@@ -116,32 +117,32 @@ def train_full_model(
     input_data: dict[str, np.ndarray],
     val_data: tuple[dict[str, np.ndarray], dict[str, np.ndarray]],
     test_data: dict[str, np.ndarray],
-    name_model: str
+    name_model: str,
 ):
     x_ast = keras.layers.GlobalAveragePooling1D()(embedding_model.output)
     x_lstm = lstm_model.output
     x = keras.layers.Concatenate()([x_ast, x_lstm])
     x = keras.layers.Dense(
-        128,
+        16,
         kernel_initializer='he_normal',
-        kernel_regularizer=keras.regularizers.l2(0.0002)
+        kernel_regularizer=keras.regularizers.l2(0.00098943)
     )(x)
     x = keras.layers.BatchNormalization()(x)
     x = keras.layers.Activation('relu')(x)
     x = keras.layers.Dropout(0.2)(x)
-    # x = keras.layers.Dense(
-    #     64,
-    #     kernel_initializer='he_normal',
-    #     kernel_regularizer=keras.regularizers.l2(0.0002)
-    # )(x)
-    # x = keras.layers.Activation('relu')(x)
-    # x = keras.layers.Dropout(0.3)(x)
-    # x = keras.layers.Dense(
-    #     16,
-    #     kernel_initializer='he_normal',
-    #     kernel_regularizer=keras.regularizers.l2(0.0002)
-    # )(x)
-    # x = keras.layers.Activation('relu')(x)
+    x = keras.layers.Dense(
+        128,
+        kernel_initializer='he_normal',
+    )(x)
+    x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.Activation('relu')(x)
+    x = keras.layers.Dropout(0.3)(x)
+    x = keras.layers.Dense(
+        48,
+        kernel_initializer='he_normal',
+    )(x)
+    x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.Activation('relu')(x)
     output = keras.layers.Dense(1, activation="sigmoid", name="output")(x)
     for i, input_tensor in enumerate(embedding_model.inputs):
         print(f"Input {i}: {input_tensor.name}, shape={input_tensor.shape}")
@@ -153,12 +154,15 @@ def train_full_model(
             "ast_depth": embedding_model.input[0],
             "ast_children_count": embedding_model.input[1],
             "ast_is_leaf": embedding_model.input[2],
+            "ast_token_length": embedding_model.input[5],
+            "ast_token_is_keyword": embedding_model.input[6],
+            "ast_sibling_index": embedding_model.input[7],
         },
         outputs=output,
         name="full_model"
     )
     model.compile(
-        optimizer=keras.optimizers.Adam(learning_rate=1e-4),
+        optimizer=keras.optimizers.Adam(learning_rate=0.00036381),
         loss="binary_crossentropy",
         metrics=["accuracy"]
     )
@@ -190,7 +194,7 @@ def train_full_model(
         callbacks=callbacks
     )
     model.save(f"{name_model}.keras")
-    plot_history(history, "full_model_training_history")
+    plot_history(history, save=True, prefix="training_full_model_lstm_ast_attention")
 
     return model
 
@@ -217,7 +221,7 @@ def evaluate_full_model(
     # Load the best model
     model: keras.Model = keras.models.load_model(model_path)
     model.summary()
-    preds = (model.predict(test_inputs) > 0.4).astype(int)
+    preds = (model.predict(test_inputs) > 0.55).astype(int)
 
     # Compute metrics
     accuracy = accuracy_score(test_labels, preds)
@@ -246,6 +250,9 @@ def evaluate_full_model(
     plt.close()
 
     loss, accuracy = model.evaluate(test_inputs, test_labels)
+
+    print("Plotting the test accuracy and loss:")
+    plt.figure(figsize=(12, 6))
     print(f"Test Loss: {loss}, Test Accuracy: {accuracy}")
 
 
@@ -281,6 +288,9 @@ def build_dense_ast_lstm_model(
         "ast_depth": embedding_model.input[0],
         "ast_children_count": embedding_model.input[1],
         "ast_is_leaf": embedding_model.input[2],
+        "ast_token_length": embedding_model.input[5],
+        "ast_token_is_keyword": embedding_model.input[6],
+        "ast_sibling_index": embedding_model.input[7],
     },
     outputs=output)
     model.compile(optimizer=keras.optimizers.Adam(learning_rate=params['lr']),
@@ -391,6 +401,9 @@ def build_dense_ast_lstm_model_tuner(
             "ast_depth": embedding_model.input[0],
             "ast_children_count": embedding_model.input[1],
             "ast_is_leaf": embedding_model.input[2],
+            "ast_token_length": embedding_model.input[5],
+            "ast_token_is_keyword": embedding_model.input[6],
+            "ast_sibling_index": embedding_model.input[7],
         }, outputs=output
     )
 
@@ -439,7 +452,7 @@ def train_dense_ast_lstm_hyperband(
         objective='val_accuracy',
         max_epochs=max_epochs,
         factor=3,
-        directory='hyperband_results',
+        directory='hyperband_results_8_feats',
         project_name='dense_ast_lstm_tuning'
     )
     stop_early = keras.callbacks.EarlyStopping(
@@ -471,5 +484,37 @@ def train_dense_ast_lstm_hyperband(
         verbose=2
     )
 
-    best_model.save("best_dense_ast_model_hyperband.keras")
+    best_model.save("best_dense_ast_model_hyperband_8_feats.keras")
     return best_model, best_hp.values
+
+
+def plot_best_model(
+    labels: np.ndarray,
+    input_data: dict[str, np.ndarray],
+    val_data: tuple[dict[str, np.ndarray], dict[str, np.ndarray]],
+    name_model: str
+):
+    model = keras.models.load_model(name_model)
+    class_weights = compute_class_weight(
+        class_weight="balanced", classes=np.unique(labels), y=labels
+    )
+    class_weight_dict = {i: class_weights[i] for i in range(len(class_weights))}
+    callbacks = [
+        keras.callbacks.ModelCheckpoint(
+            "full_model.keras",
+            monitor='val_accuracy',
+            save_best_only=True,
+            mode='max',
+            verbose=1
+        ),
+    ]
+    history = model.fit(
+        x=input_data,
+        y=labels,
+        validation_data=val_data,
+        epochs=50,
+        batch_size=32,
+        class_weight=class_weight_dict,
+        callbacks=callbacks
+    )
+    plot_history(history, prefix="best_model_hp_tuner")

@@ -6,12 +6,13 @@ Based on research paper:
 "Plagiarism Detection in Source Code using Machine Learning."
 """
 import numpy as np
+import keras
 
 # Uncomment the following lines to enable
 # generating pipeline (need datasets to fully run pipeline)
 from train import (
     ast_embedding,
-    # evaluate_saved_model,
+    evaluate_saved_model,
     get_project_path,
     load_dataset,
     prepare_model_inputs,
@@ -32,8 +33,15 @@ from train_embedding import (
     build_token_lstm_model,
     evaluate_full_model,
     train_dense_ast_lstm_random_search,
-    train_dense_ast_lstm_hyperband
+    train_dense_ast_lstm_hyperband,
+    plot_best_model
 )
+
+import tensorflow as tf
+
+# Use all 8 logical threads
+tf.config.threading.set_intra_op_parallelism_threads(8)
+tf.config.threading.set_inter_op_parallelism_threads(8)
 
 # Uncomment the following lines to enable
 # data augmentation (need datasets to fully run pipeline)
@@ -73,14 +81,14 @@ if __name__ == "__main__":
         lstm_units=128,
         max_length=700
     )
-    # ############################################################
+    # # ############################################################
 
-    # # Pipeline ran once to prepare the dataset and train the model.
-    # # print("Starting plagiarism detection pipeline...")
+    # # # Pipeline ran once to prepare the dataset and train the model.
+    # # # print("Starting plagiarism detection pipeline...")
 
-    # # Optional: run these once to prepare the dataset
-    # preprocess_and_split_ast_data()
-    # augment_data_directory()
+    # # # Optional: run these once to prepare the dataset
+    # # preprocess_and_split_ast_data()
+    # # augment_data_directory()
 
     train_path = get_project_path("matrix_data", "train")
     val_path = get_project_path("matrix_data", "validation")
@@ -94,7 +102,7 @@ if __name__ == "__main__":
     val_inputs = prepare_model_inputs(val_features)
     test_inputs = prepare_model_inputs(test_features)
 
-    # # print("Building AST embedding model...")
+    # # # print("Building AST embedding model...")
     ast_model = ast_embedding("ast")
     _ = ast_model(train_inputs)
     train_inputs_dict = {
@@ -104,6 +112,9 @@ if __name__ == "__main__":
         "ast_depth": train_features["depth"],
         "ast_children_count": train_features["children_count"],
         "ast_is_leaf": train_features["is_leaf"],
+        "ast_token_length": train_features["token_length"],
+        "ast_token_is_keyword": train_features["token_is_keyword"],
+        "ast_sibling_index": train_features["sibling_index"],
     }
     val_inputs_dict = {
         "tokens_input": embedded_paddings_val,
@@ -112,6 +123,9 @@ if __name__ == "__main__":
         "ast_depth": val_features["depth"],
         "ast_children_count": val_features["children_count"],
         "ast_is_leaf": val_features["is_leaf"],
+        "ast_token_length": val_features["token_length"],
+        "ast_token_is_keyword": val_features["token_is_keyword"],
+        "ast_sibling_index": val_features["sibling_index"],
     }
     # train_full_model(
     #     embedding_model=ast_model,
@@ -126,14 +140,14 @@ if __name__ == "__main__":
     #     name_model="full_lstm_ast_cnn_modelv2.keras"
     # )
 
-    print("Training with dense model and random search...")
-    # best_model, best_params = train_dense_ast_lstm_random_search(
-    #     ast_model, lstm_model, train_inputs_dict, train_labels, val_inputs_dict, val_labels, n_trials=10
-    # )
+    # print("Training with dense model and random search...")
+    # # best_model, best_params = train_dense_ast_lstm_random_search(
+    # #     ast_model, lstm_model, train_inputs_dict, train_labels, val_inputs_dict, val_labels, n_trials=10
+    # # )
     best_model, best_params = train_dense_ast_lstm_hyperband(
         ast_model, lstm_model, train_inputs_dict, train_labels, val_inputs_dict, val_labels
     )
-    best_model.save("best_ast_lstm_dense_hp_model.keras")
+    best_model.save("best_ast_lstm_dense_hp_8_feats_model.keras")
 
     # train_and_evaluate_model()
 
@@ -142,7 +156,19 @@ if __name__ == "__main__":
     # lstm_path = get_project_path("embed_data")
 
     # evaluate_full_model(
-    #     "full_lstm_ast_cnn_modelv2.keras",
+    #     "best_dense_ast_model_hyperband.keras",
     #     test_path=test_ast_path,
     #     test_lstm_path=lstm_path
+    # )
+    # # evaluate_saved_model(
+    # #     "best_dense_ast_model_hyperband.keras",
+    # # )
+    # plot_best_model(
+    #     labels=train_labels,
+    #     input_data=train_inputs_dict,
+    #     val_data=(
+    #         val_inputs_dict,
+    #         val_labels
+    #     ),
+    #     name_model="best_dense_ast_model_hyperband.keras"
     # )

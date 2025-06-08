@@ -38,7 +38,7 @@ def load_folder_data(folder_path: str, case_folder: str) -> tuple[list[dict], li
             "is_leaf": [],
             "token_length": [],
             "token_is_keyword": [],
-            "sibling_index": []
+            "sibling_index": [],
         }
 
         for line in lines:
@@ -79,7 +79,10 @@ def prepare_model_inputs(
         f"{name_prefix}_token_id": features["token_ids"][..., np.newaxis],
         f"{name_prefix}_depth": features["depth"][..., np.newaxis],
         f"{name_prefix}_children_count": features["children_count"][..., np.newaxis],
-        f"{name_prefix}_is_leaf": features["is_leaf"][..., np.newaxis]
+        f"{name_prefix}_is_leaf": features["is_leaf"][..., np.newaxis],
+        f"{name_prefix}_token_length": features["token_length"][..., np.newaxis],
+        f"{name_prefix}_token_is_keyword": features["token_is_keyword"][..., np.newaxis],
+        f"{name_prefix}_sibling_index": features["sibling_index"][..., np.newaxis],
     }
 
 def binary_plagiarism_code_prediction(
@@ -192,30 +195,20 @@ def plot_history(
     if save:
         os.makedirs(image_dir, exist_ok=True)
 
-    # Accuracy plot
-    plt.figure()
-    plt.plot(history.history['accuracy'], label='Train Accuracy', linestyle='-')
-    plt.plot(history.history['val_accuracy'], label='Val Accuracy', marker='o')
-    plt.title('Model Accuracy')
-    plt.xlabel('Epoch')
-    plt.ylabel('Accuracy')
-    plt.legend()
-    if save:
-        plt.savefig(os.path.join(image_dir, f"{prefix}_accuracy.png"))
-    else:
-        plt.show()
-    plt.close()
+    for metric in ["accuracy", "loss"]:
+        if metric not in history.history:
+            continue
 
-    # Loss plot
-    plt.figure()
-    plt.plot(history.history['loss'], label='Train Loss', linestyle='-')
-    plt.plot(history.history['val_loss'], label='Val Loss', marker='o')
-    plt.title('Model Loss')
-    plt.xlabel('Epoch')
-    plt.ylabel('Loss')
-    plt.legend()
-    if save:
-        plt.savefig(os.path.join(image_dir, f"{prefix}_loss.png"))
-    else:
-        plt.show()
-    plt.close()
+        plt.figure()
+        plt.plot(history.history[metric], label=f'Train {metric.title()}', linestyle='-')
+        plt.plot(history.history.get(f'val_{metric}', []), label=f'Val {metric.title()}', linestyle='--')
+        plt.title(f'Model {metric.title()}')
+        plt.xlabel("Epoch")
+        plt.ylabel(metric.title())
+        plt.legend()
+
+        if save:
+            plt.savefig(os.path.join(image_dir, f"{prefix}_{metric}.png"))
+        else:
+            plt.show()
+        plt.close()

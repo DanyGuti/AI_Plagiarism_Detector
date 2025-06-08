@@ -40,6 +40,7 @@ conplag/
 cases_lexer/
 embed_data/
 src/hyperband_results
+src/hyperband_results_8_feats
 
 data
 matrix_data
