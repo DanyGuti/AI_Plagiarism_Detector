@@ -110,6 +110,41 @@ def build_token_lstm_model(
         name='token_lstm_model'
     )
 
+def init_lstm_model_hb(
+    lstm_train_inputs: keras.Input,
+    train_labels: np.ndarray,
+    lstm_val_inputs: keras.Input,
+    lstm_val_labels: np.ndarray,
+    max_epochs: int = 30
+):
+    def build_lstm(hp):
+        model, _ = build_token_lstm_model_hb(hp)
+        return model
+    tuner = kt.Hyperband(
+        build_lstm,
+        objective='val_accuracy',
+        max_epochs=max_epochs,
+        factor=3,
+        directory='hyperband_results',
+        project_name='token_lstm_tuning'
+    )
+    stop_early = keras.callbacks.EarlyStopping(
+        monitor='val_loss',
+        patience=10
+    )
+    tuner.search(
+        lstm_train_inputs,
+        train_labels,
+        validation_data=(lstm_val_inputs, lstm_val_labels),
+        epochs=max_epochs,
+        batch_size=32,
+        callbacks=[stop_early],
+        verbose=2
+    )
+    best_hp = tuner.get_best_hyperparameters(num_trials=1)[0]
+    best_model, feature_extractor = build_token_lstm_model_hb(best_hp)
+    return best_model, best_hp.values, feature_extractor
+
 def build_token_lstm_model_hb(
     hp: kt.HyperParameters,
     lstm_units: int = 128,
@@ -141,11 +176,23 @@ def build_token_lstm_model_hb(
         x = keras.layers.Activation('relu', name=f"relu_{i}_{unique_id}")(x)
         if i < 3:
             x = keras.layers.Dropout(hp.Float(f'dropout{i}', 0.2, 0.5, step=0.1), name=f"dropout_{i}_{unique_id}")(x)
-    return keras.Model(
+    feature_extractor = keras.Model(
         inputs=tokens_input,
         outputs=x,
-        name='token_lstm_model_hb'
+        name=f'token_lstm_feature_extractor_{unique_id}'
     )
+    output = keras.layers.Dense(1, activation="sigmoid", name=f"output_{unique_id}")(x)
+    model = keras.Model(
+        inputs=tokens_input,
+        outputs=output,
+        name=f'token_lstm_model_hb_{unique_id}'
+    )
+    model.compile(
+        optimizer=keras.optimizers.Adam(learning_rate=hp.Float('lr', 1e-5, 1e-2, sampling='log')),
+        loss='binary_crossentropy',
+        metrics=['accuracy']
+    )
+    return model, feature_extractor
 
 def train_full_model(
     embedding_model: keras.Model,
@@ -396,6 +443,7 @@ def train_dense_ast_lstm_random_search(
 def build_dense_ast_lstm_model_tuner(
     hp: kt.HyperParameters,
     embedding_model: keras.Model,
+    lstm_model: keras.Model
 ) -> keras.Model:
     '''
     Builds a dense model for AST embeddings and LSTM embeddings with hyperparameters from Keras Tuner.
@@ -406,7 +454,6 @@ def build_dense_ast_lstm_model_tuner(
     Returns:
         keras.Model: The compiled dense model.
     '''
-    lstm_model = build_token_lstm_model_hb(hp)
     x_ast = keras.layers.GlobalAveragePooling1D(name="global_avg_pool_ast")(embedding_model.output)
     x_lstm = lstm_model.output
     x = keras.layers.Concatenate(name="concat_dense_ast_lstm")([x_ast, x_lstm])
@@ -445,6 +492,7 @@ def build_dense_ast_lstm_model_tuner(
 
 def train_dense_ast_lstm_hyperband(
     embedding_model: keras.Model,
+    lstm_model: keras.Model,
     train_inputs: dict[str, list],
     train_labels: np.array,
     val_inputs: dict[str, list],
@@ -455,6 +503,7 @@ def train_dense_ast_lstm_hyperband(
     Trains a dense model using Hyperband for hyperparameter optimization.
     Args:
         embedding_model (keras.Model): The pre-trained AST embedding model.
+        lstm_model (keras.Model): The pre-trained LSTM model for token embeddings.
         train_inputs (dict): The training inputs for the model.
         train_labels (np.array): The labels for the training data.
         val_inputs (dict): The validation inputs for the model.
@@ -472,7 +521,7 @@ def train_dense_ast_lstm_hyperband(
     )
     cw = {i: w for i, w in enumerate(class_weights)}
     def build_model(hp):
-        return build_dense_ast_lstm_model_tuner(hp, embedding_model)
+        return build_dense_ast_lstm_model_tuner(hp, embedding_model, lstm_model)
     tuner = kt.Hyperband(
         build_model,
         objective='val_accuracy',

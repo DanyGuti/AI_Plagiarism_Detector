@@ -34,7 +34,8 @@ from train_embedding import (
     evaluate_full_model,
     train_dense_ast_lstm_random_search,
     train_dense_ast_lstm_hyperband,
-    plot_best_model
+    plot_best_model,
+    init_lstm_model_hb
 )
 
 import tensorflow as tf
@@ -138,8 +139,15 @@ if __name__ == "__main__":
     # # best_model, best_params = train_dense_ast_lstm_random_search(
     # #     ast_model, lstm_model, train_inputs_dict, train_labels, val_inputs_dict, val_labels, n_trials=10
     # # )
+    best_lstm_model, best_lstm_hp, feature_extractor = init_lstm_model_hb(
+        lstm_train_inputs=train_inputs_dict["tokens_input"],
+        train_labels=token_labels,
+        lstm_val_inputs=val_inputs_dict["tokens_input"],
+        lstm_val_labels=val_labels
+    )
+    feature_extractor.trainable = False
     best_model, best_params = train_dense_ast_lstm_hyperband(
-        ast_model, train_inputs_dict, train_labels, val_inputs_dict, val_labels
+        ast_model, feature_extractor, train_inputs_dict, train_labels, val_inputs_dict, val_labels
     )
     best_model.save("best_ast_lstm_dense_hp_v2_model.keras")
 
