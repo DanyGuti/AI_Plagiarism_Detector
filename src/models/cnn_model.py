@@ -80,9 +80,6 @@ def prepare_model_inputs(
         f"{name_prefix}_depth": features["depth"][..., np.newaxis],
         f"{name_prefix}_children_count": features["children_count"][..., np.newaxis],
         f"{name_prefix}_is_leaf": features["is_leaf"][..., np.newaxis],
-        f"{name_prefix}_token_length": features["token_length"][..., np.newaxis],
-        f"{name_prefix}_token_is_keyword": features["token_is_keyword"][..., np.newaxis],
-        f"{name_prefix}_sibling_index": features["sibling_index"][..., np.newaxis],
     }
 
 def binary_plagiarism_code_prediction(

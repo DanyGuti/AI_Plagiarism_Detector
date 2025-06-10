@@ -43,18 +43,6 @@ def ast_embedding(
         shape=(MAX_LENGTH_NODES,),
         name=f"{name_prefix}_token_id"
     )
-    token_length: keras.KerasTensor = keras.Input(
-        shape=(MAX_LENGTH_NODES, 1),
-        name=f"{name_prefix}_token_length"
-    )
-    token_is_keyword: keras.KerasTensor = keras.Input(
-        shape=(MAX_LENGTH_NODES, 1),
-        name=f"{name_prefix}_token_is_keyword"
-    )
-    sibling_index: keras.KerasTensor = keras.Input(
-        shape=(MAX_LENGTH_NODES, 1),
-        name=f"{name_prefix}_sibling_index"
-    )
 
     type_embedding_layer: tf.Tensor = keras.layers.Embedding(
         input_dim=TYPE_VOCAB_SIZE,
@@ -73,9 +61,6 @@ def ast_embedding(
         is_leaf,
         type_embedding_layer,
         token_embedding_layer,
-        token_length,
-        token_is_keyword,
-        sibling_index
     ])
 
     l2_reg = 0.002 # Increased L2 regularization factor
@@ -134,9 +119,6 @@ def ast_embedding(
             is_leaf,
             type_id,
             token_id,
-            token_length,
-            token_is_keyword,
-            sibling_index
         ],
         outputs=x,
         name=f"{name_prefix}_ast_embedding"

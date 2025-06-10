@@ -75,12 +75,12 @@ if __name__ == "__main__":
     embedded_paddings = padding_embeddings(sequences, max_length=700)
     embedded_paddings_val = padding_embeddings(sequences_val, max_length=700)
     embedded_paddings_test = padding_embeddings(sequences_test, max_length=700)
-    lstm_model = build_token_lstm_model(
-        vocab_size=500,
-        embedding_dim=128,
-        lstm_units=128,
-        max_length=700
-    )
+    # lstm_model = build_token_lstm_model(
+    #     vocab_size=500,
+    #     embedding_dim=128,
+    #     lstm_units=128,
+    #     max_length=700
+    # )
     # # ############################################################
 
     # # # Pipeline ran once to prepare the dataset and train the model.
@@ -112,9 +112,6 @@ if __name__ == "__main__":
         "ast_depth": train_features["depth"],
         "ast_children_count": train_features["children_count"],
         "ast_is_leaf": train_features["is_leaf"],
-        "ast_token_length": train_features["token_length"],
-        "ast_token_is_keyword": train_features["token_is_keyword"],
-        "ast_sibling_index": train_features["sibling_index"],
     }
     val_inputs_dict = {
         "tokens_input": embedded_paddings_val,
@@ -123,9 +120,6 @@ if __name__ == "__main__":
         "ast_depth": val_features["depth"],
         "ast_children_count": val_features["children_count"],
         "ast_is_leaf": val_features["is_leaf"],
-        "ast_token_length": val_features["token_length"],
-        "ast_token_is_keyword": val_features["token_is_keyword"],
-        "ast_sibling_index": val_features["sibling_index"],
     }
     # train_full_model(
     #     embedding_model=ast_model,
@@ -145,9 +139,9 @@ if __name__ == "__main__":
     # #     ast_model, lstm_model, train_inputs_dict, train_labels, val_inputs_dict, val_labels, n_trials=10
     # # )
     best_model, best_params = train_dense_ast_lstm_hyperband(
-        ast_model, lstm_model, train_inputs_dict, train_labels, val_inputs_dict, val_labels
+        ast_model, train_inputs_dict, train_labels, val_inputs_dict, val_labels
     )
-    best_model.save("best_ast_lstm_dense_hp_8_feats_model.keras")
+    best_model.save("best_ast_lstm_dense_hp_v2_model.keras")
 
     # train_and_evaluate_model()
 

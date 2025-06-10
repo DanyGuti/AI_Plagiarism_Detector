@@ -69,8 +69,7 @@ def load_dataset(base_path: str) -> tuple[dict[str, list], np.array]:
             each containing a list of corresponding values.
         - all_labels (np.array): An array of labels for the samples.
     '''
-    all_samples = {k: [] for k in ["type_ids", "token_ids", "depth", "children_count", "is_leaf",
-                                   "token_length", "token_is_keyword", "sibling_index"]}
+    all_samples = {k: [] for k in ["type_ids", "token_ids", "depth", "children_count", "is_leaf"]}
     all_labels = []
 
     for case in CASES:

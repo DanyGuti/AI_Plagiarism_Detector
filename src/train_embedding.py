@@ -110,6 +110,43 @@ def build_token_lstm_model(
         name='token_lstm_model'
     )
 
+def build_token_lstm_model_hb(
+    hp: kt.HyperParameters,
+    lstm_units: int = 128,
+    max_length: int = 700
+) -> keras.Model:
+    unique_id = str(uuid.uuid4())
+    dropout_rate = hp.Float('dropout_rate', 0.1, 0.5, step=0.1)
+    tokens_input = keras.Input(
+        shape=(max_length, 10),name='tokens_input'
+    )
+    x = keras.layers.Bidirectional(
+        keras.layers.LSTM(
+            lstm_units,
+            kernel_initializer='he_normal',
+            name=f"lstm_layer_{unique_id}",
+            recurrent_dropout=dropout_rate,
+            dropout=dropout_rate,
+        )
+    )(tokens_input)
+
+    for i in range(1, 4):
+        x = keras.layers.Dense(
+            hp.Int(f'dense{i}', min_value=16, max_value=256, step=16),
+            kernel_initializer='he_normal',
+            kernel_regularizer=keras.regularizers.l2(hp.Float('l2', 1e-5, 1e-2, sampling='log')),
+            name=f"dense_{i}_{unique_id}"
+        )(x)
+        x = keras.layers.BatchNormalization(name=f"batch_norm_{i}_{unique_id}")(x)
+        x = keras.layers.Activation('relu', name=f"relu_{i}_{unique_id}")(x)
+        if i < 3:
+            x = keras.layers.Dropout(hp.Float(f'dropout{i}', 0.2, 0.5, step=0.1), name=f"dropout_{i}_{unique_id}")(x)
+    return keras.Model(
+        inputs=tokens_input,
+        outputs=x,
+        name='token_lstm_model_hb'
+    )
+
 def train_full_model(
     embedding_model: keras.Model,
     lstm_model: keras.Model,
@@ -154,9 +191,6 @@ def train_full_model(
             "ast_depth": embedding_model.input[0],
             "ast_children_count": embedding_model.input[1],
             "ast_is_leaf": embedding_model.input[2],
-            "ast_token_length": embedding_model.input[5],
-            "ast_token_is_keyword": embedding_model.input[6],
-            "ast_sibling_index": embedding_model.input[7],
         },
         outputs=output,
         name="full_model"
@@ -288,9 +322,6 @@ def build_dense_ast_lstm_model(
         "ast_depth": embedding_model.input[0],
         "ast_children_count": embedding_model.input[1],
         "ast_is_leaf": embedding_model.input[2],
-        "ast_token_length": embedding_model.input[5],
-        "ast_token_is_keyword": embedding_model.input[6],
-        "ast_sibling_index": embedding_model.input[7],
     },
     outputs=output)
     model.compile(optimizer=keras.optimizers.Adam(learning_rate=params['lr']),
@@ -365,7 +396,6 @@ def train_dense_ast_lstm_random_search(
 def build_dense_ast_lstm_model_tuner(
     hp: kt.HyperParameters,
     embedding_model: keras.Model,
-    lstm_model: keras.Model
 ) -> keras.Model:
     '''
     Builds a dense model for AST embeddings and LSTM embeddings with hyperparameters from Keras Tuner.
@@ -376,7 +406,7 @@ def build_dense_ast_lstm_model_tuner(
     Returns:
         keras.Model: The compiled dense model.
     '''
-
+    lstm_model = build_token_lstm_model_hb(hp)
     x_ast = keras.layers.GlobalAveragePooling1D(name="global_avg_pool_ast")(embedding_model.output)
     x_lstm = lstm_model.output
     x = keras.layers.Concatenate(name="concat_dense_ast_lstm")([x_ast, x_lstm])
@@ -388,6 +418,7 @@ def build_dense_ast_lstm_model_tuner(
             kernel_regularizer=keras.regularizers.l2(hp.Float('l2', 1e-5, 1e-2, sampling='log')),
             name=f"dense_{i}_{unique_id}"
         )(x)
+        x = keras.layers.BatchNormalization(name=f"batch_norm_{i}_{unique_id}")(x)
         x = keras.layers.Activation('relu', name=f"relu_{i}")(x)
         if i < 3:
             x = keras.layers.Dropout(hp.Float(f'dropout{i}', 0.2, 0.5, step=0.1), name=f"dropout_{i}_{unique_id}")(x)
@@ -401,9 +432,6 @@ def build_dense_ast_lstm_model_tuner(
             "ast_depth": embedding_model.input[0],
             "ast_children_count": embedding_model.input[1],
             "ast_is_leaf": embedding_model.input[2],
-            "ast_token_length": embedding_model.input[5],
-            "ast_token_is_keyword": embedding_model.input[6],
-            "ast_sibling_index": embedding_model.input[7],
         }, outputs=output
     )
 
@@ -417,7 +445,6 @@ def build_dense_ast_lstm_model_tuner(
 
 def train_dense_ast_lstm_hyperband(
     embedding_model: keras.Model,
-    lstm_model: keras.Model,
     train_inputs: dict[str, list],
     train_labels: np.array,
     val_inputs: dict[str, list],
@@ -428,7 +455,6 @@ def train_dense_ast_lstm_hyperband(
     Trains a dense model using Hyperband for hyperparameter optimization.
     Args:
         embedding_model (keras.Model): The pre-trained AST embedding model.
-        lstm_model (keras.Model): The pre-trained LSTM model for token embeddings.
         train_inputs (dict): The training inputs for the model.
         train_labels (np.array): The labels for the training data.
         val_inputs (dict): The validation inputs for the model.
@@ -446,13 +472,13 @@ def train_dense_ast_lstm_hyperband(
     )
     cw = {i: w for i, w in enumerate(class_weights)}
     def build_model(hp):
-        return build_dense_ast_lstm_model_tuner(hp, embedding_model, lstm_model)
+        return build_dense_ast_lstm_model_tuner(hp, embedding_model)
     tuner = kt.Hyperband(
         build_model,
         objective='val_accuracy',
         max_epochs=max_epochs,
         factor=3,
-        directory='hyperband_results_8_feats',
+        directory='hyperband_results_v2',
         project_name='dense_ast_lstm_tuning'
     )
     stop_early = keras.callbacks.EarlyStopping(
@@ -484,7 +510,7 @@ def train_dense_ast_lstm_hyperband(
         verbose=2
     )
 
-    best_model.save("best_dense_ast_model_hyperband_8_feats.keras")
+    best_model.save("best_dense_ast_model_v2_hyperband.keras")
     return best_model, best_hp.values
 
 
